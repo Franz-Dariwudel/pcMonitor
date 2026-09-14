@@ -26,6 +26,7 @@ class LanguageDialogTests(unittest.TestCase):
                 window.show_settings()
                 dialogs=[w for w in Gtk.Window.get_toplevels() if isinstance(w,Gtk.Dialog) and w.get_transient_for()==window]
                 self.assertEqual(len(dialogs),1)
+                self.assertFalse(any(isinstance(w,Gtk.Entry) for w in children(dialogs[0])))
                 labels=[w.get_label() for w in children(dialogs[0]) if isinstance(w,Gtk.Button)]
                 self.assertIn(window.tr('packs.search'),labels)
                 dialogs[0].response(Gtk.ResponseType.CANCEL)
@@ -51,7 +52,10 @@ class LanguageDialogTests(unittest.TestCase):
                     time.sleep(.01)
                 self.assertTrue(predicate())
             from monitor.language_packs import install_pair
-            def install(server,code,directory,help_directory):
+            def install(server,code,directory,help_directory,download_directory):
+                from monitor.constants import LANGUAGE_SERVER
+                self.assertEqual(server,LANGUAGE_SERVER)
+                self.assertEqual(download_directory,root/'download')
                 self.assertEqual(help_directory,help_dir)
                 return install_pair(DATA,HTML,code,directory,help_directory)
             try:

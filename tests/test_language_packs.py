@@ -20,7 +20,7 @@ def install_local(path, directory):
 
 
 def install_online(server, code, directory):
-    return install_online_pair(server,code,directory,Path(directory)/'help')
+    return install_online_pair(server,code,directory,Path(directory)/'help',Path(directory)/'download')
 
 
 def manifest(path='languages/fr.json', digest=None):
@@ -128,3 +128,39 @@ class PackTests(unittest.TestCase):
         from monitor.constants import ROOT
         for code in ('de','en'):
             help_document((ROOT/'help'/f'{code}.html').read_bytes())
+
+    def test_fresh_manifest_and_downloads_saved_before_install(self):
+        from monitor.language_packs import install_online_pair,fetch_manifest
+        with TemporaryDirectory() as d:
+            root=Path(d)
+            with patch('monitor.language_packs.download',side_effect=[manifest(),manifest(),manifest(),DATA,HTML]) as fetch:
+                fetch_manifest('https://example.org')
+                fetch_manifest('https://example.org')
+                first,second=[call.args[0] for call in fetch.call_args_list]
+                self.assertNotEqual(first,second)
+                self.assertTrue(first.startswith('https://example.org/manifest.json?pcmonitor='))
+                install_online_pair('https://example.org','fr',root/'languages',root/'help',root/'download')
+                self.assertIn('?sha256=',fetch.call_args_list[-1].args[0])
+            for folder,ext,expected in (('languages','.json',DATA),('help','.html',HTML)):
+                self.assertEqual((root/'download'/folder/('fr'+ext)).read_bytes(),expected)
+                self.assertEqual((root/folder/('fr'+ext)).read_bytes(),expected)
+
+    def test_unwritable_download_does_not_change_active_pair(self):
+        from monitor.language_packs import install_online_pair
+        with TemporaryDirectory() as d:
+            root=Path(d);(root/'languages').mkdir();(root/'help').mkdir()
+            (root/'languages/fr.json').write_bytes(DATA);(root/'help/fr.html').write_bytes(HTML)
+            blocked=root/'download';blocked.write_text('not a directory')
+            with patch('monitor.language_packs.download',side_effect=[manifest(),DATA,HTML]):
+                with self.assertRaisesRegex(PackError,'HM504'):
+                    install_online_pair('https://example.org','fr',root/'languages',root/'help',blocked)
+            self.assertEqual((root/'languages/fr.json').read_bytes(),DATA)
+            self.assertEqual((root/'help/fr.html').read_bytes(),HTML)
+
+    def test_saved_download_hashes_are_rechecked(self):
+        from monitor.language_packs import install_local_pair
+        with TemporaryDirectory() as d:
+            root=Path(d);(root/'fr.json').write_bytes(DATA);(root/'fr.html').write_bytes(HTML)
+            with self.assertRaisesRegex(PackError,'HM503'):
+                install_local_pair(root/'fr.json',root/'languages',root/'help',('0'*64,hashlib.sha256(HTML).hexdigest()))
+            self.assertFalse((root/'languages').exists())
