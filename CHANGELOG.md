@@ -1,3 +1,9 @@
+# Sprachpakete 2026-09-14 (kompatibel mit 1.6.0)
+
+- Spanisch, Französisch, Portugiesisch, Chinesisch (vereinfacht), Hindi, Arabisch, Russisch und Türkisch: jeweils 293 Texte und HTML-Hilfe mit vollständiger Fehlerübersicht.
+- Alle zehn Pakete werden über den GitHub-Katalog angeboten.
+- Quellcodepaket enthält alle Übersetzungen; kompilierte Standardausgabe weiterhin Deutsch/Englisch.
+
 # 1.6.0
 
 - Anwendung, Hilfe, Exportnamen und Auslieferung heißen pcMonitor.

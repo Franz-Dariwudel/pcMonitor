@@ -19,10 +19,19 @@ from monitor.constants import ROOT,VERSION
 
 def main():
     (ROOT/'dist').mkdir(exist_ok=True);(ROOT/'work').mkdir(exist_ok=True)
-    # Öffentlicher Sprachserver enthält ausschließlich die zwei Standardpakete.
+    # Alle vorhandenen Sprach-/Hilfepaare veröffentlichen; keine Sprachen erfinden.
+    # Die kompilierte Standardausgabe enthält weiterhin nur Deutsch und Englisch.
+    from monitor.language_packs import catalog, help_document
+    codes=[]
+    for language in sorted((ROOT/'languages').glob('*.json')):
+        help_file=ROOT/'help'/(language.stem+'.html')
+        if not help_file.is_file():
+            raise ValueError('Missing help: '+language.stem)
+        catalog(language.read_bytes());help_document(help_file.read_bytes())
+        codes.append(language.stem)
     packs=ROOT/'dist/pcMonitor-sprachpakete';packs.mkdir(exist_ok=True)
     manifest={'version':1,'languages':{},'help':{}}
-    for code in ('de','en'):
+    for code in codes:
         for folder,suffix,key in (('languages','.json','languages'),('help','.html','help')):
             source=ROOT/folder/(code+suffix)
             (packs/folder).mkdir(exist_ok=True)
@@ -43,7 +52,7 @@ def main():
         for name in ('README.md','CHANGELOG.md','LICENSE','build.py','install.py','admin_worker.py','launcher.py','pyproject.toml'):
             shutil.copy2(ROOT/name,stage/name)
         info={'version':VERSION,'kind':'source','python':f'{sys.version_info.major}.{sys.version_info.minor}',
-              'gtk':'>=4.8','languages':['de','en'],'personal_data':False}
+              'gtk':'>=4.8','languages':codes,'personal_data':False}
         (stage/'build-info.json').write_text(json.dumps(info,indent=2))
         for p in stage.rglob('*'):p.chmod(0o755 if p.is_dir() else 0o644)
         archive=ROOT/'dist'/f'pcMonitor-{VERSION}-quellcode.zip'
@@ -51,6 +60,11 @@ def main():
             for p in sorted(stage.rglob('*')):
                 if p.is_file():z.write(p,p.relative_to(stage.parent))
         print(archive)
+        # Nur die bereinigte Build-Kopie beschneiden, niemals Benutzerdateien.
+        for folder in ('languages','help'):
+            for resource in (stage/folder).iterdir():
+                if resource.stem not in ('de','en'):resource.unlink()
+        info['languages']=['de','en']
         for p in [*(stage/'monitor').glob('*.py'),stage/'admin_worker.py']:
             py_compile.compile(str(p),cfile=str(p.with_suffix('.pyc')),dfile=str(p.relative_to(stage)),doraise=True)
             p.unlink()

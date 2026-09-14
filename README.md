@@ -1,6 +1,6 @@
 # pcMonitor 1.6.0
 
-Lokaler pcMonitor für Linux Mint mit GTK 4. Links stehen von Linux erkannte Anschlüsse mit farbigen, nach Anschlussart gestalteten Symbolen; rechts erscheinen Systemübersicht oder Details zur Auswahl. Deutsch und Englisch sind enthalten. Zusätzliche Sprachen können als JSON-Dateien ergänzt werden.
+Lokaler pcMonitor für Linux Mint mit GTK 4. Links stehen von Linux erkannte Anschlüsse mit farbigen, nach Anschlussart gestalteten Symbolen; rechts erscheinen Systemübersicht oder Details zur Auswahl. Deutsch und Englisch sind standardmäßig enthalten. Spanisch, Französisch, Portugiesisch, Chinesisch (vereinfacht), Hindi, Arabisch, Russisch und Türkisch lassen sich mit passender HTML-Hilfe installieren.
 
 ## Voraussetzungen und Start
 
@@ -114,7 +114,7 @@ Unter Bearbeiten → Einstellungen lassen sich Sprachdatei und passende HTML-Hil
 
 Der Sprachserver ist auf [https://github.com/Franz-Dariwudel/pcMonitor](https://github.com/Franz-Dariwudel/pcMonitor) voreingestellt. Bei Bedarf einen anderen Repositorylink eintragen; ohne Branchangabe wird `main` verwendet. Andere Branches über einen `/tree/BRANCH`-Link oder die Raw-Adresse angeben. „Verfügbare Sprachen suchen“ liest `manifest.json`, „Installieren / aktualisieren“ prüft und installiert beide Dateien. Keine automatischen Hintergrundupdates und keine Internetpflicht.
 
-`python3 build.py` erstellt zusätzlich `dist/pcMonitor-sprachpakete/` mit einem uploadfertigen `manifest.json`, `languages/` und `help/` für Deutsch und Englisch. Diese drei Elemente in den Stammordner des öffentlichen GitHub-Repositorys hochladen. Keine Konfigurationen, Logs oder Caches hochladen. Das Programm führt keine GitHub-Anmeldung durch; private Repositorys werden nicht unterstützt. Das öffentliche Repository ist https://github.com/Franz-Dariwudel/pcMonitor.
+`python3 build.py` erstellt zusätzlich `dist/pcMonitor-sprachpakete/` mit einem uploadfertigen `manifest.json`, `languages/` und `help/` für alle vorhandenen Sprach-/Hilfepaare. Diese drei Elemente in den Stammordner des öffentlichen GitHub-Repositorys hochladen. Keine Konfigurationen, Logs oder Caches hochladen. Das Programm führt keine GitHub-Anmeldung durch; private Repositorys werden nicht unterstützt. Das öffentliche Repository ist https://github.com/Franz-Dariwudel/pcMonitor.
 
 Manifestformat (schematisch; SHA256 durch den tatsächlichen Hash ersetzen):
 
@@ -130,8 +130,12 @@ Manifestformat (schematisch; SHA256 durch den tatsächlichen Hash ersetzen):
 }
 ```
 
-Für jede angebotene Sprache wird gleichsprachige HTML-Hilfe benötigt. `language.name` und sämtliche JSON-Werte sind Texte. Codes de, en, es, fr, pt, zh, hi, ar, ru und tr sowie weitere übliche Sprachcodes sind möglich. Aktuell enthalten sind de/en. Für eine zusätzliche Sprache beide echten Übersetzungen und ihre SHA256-Einträge ergänzen. Die Sprache und Hilfe müssen nicht dieselbe Versionsnummer haben. Versionen werden angezeigt; ein erneutes Installieren ersetzt die lokale Fassung auch bei gleicher Versionsnummer.
+Für jede angebotene Sprache wird gleichsprachige HTML-Hilfe benötigt. `language.name` und sämtliche JSON-Werte sind Texte. Codes de, en, es, fr, pt, zh, hi, ar, ru und tr sowie weitere übliche Sprachcodes sind möglich. Verfügbar sind alle zehn Sprachen de, en, es, fr, pt, zh, hi, ar, ru und tr. Die kompilierte Standardausgabe enthält de/en; der vollständige Quellcode und die Sprachpakete enthalten alle zehn. Für eine zusätzliche Sprache beide echten Übersetzungen und ihre SHA256-Einträge ergänzen. Die Sprache und Hilfe müssen nicht dieselbe Versionsnummer haben. Versionen werden angezeigt; ein erneutes Installieren ersetzt die lokale Fassung auch bei gleicher Versionsnummer.
 
 Online-Dateien werden auf HTTPS, relative Dateipfade, Größe (je maximal 2 MiB), SHA256 und Inhalt geprüft. Die HTML-Hilfe darf keine Skripte, Formulare, externes CSS oder eingebettete Inhalte enthalten. Prüfsummen schützen vor Übertragungsfehlern, ersetzen jedoch keine unabhängige Signatur. Erst nach erfolgreicher Prüfung beider Dateien wird installiert; bei Schreibfehlern wird zurückgerollt. Die zwei Dateiumbenennungen sind bei Stromausfall nicht gemeinsam atomar. Bei fehlgeschlagener Rückrollung bleiben `.pack-backup-…` zur Wiederherstellung erhalten. HM501–HM505 sind in beiden HTML-Hilfen erklärt.
 
 Der technische Python-Modulname `monitor` bleibt für bestehende Startaufrufe kompatibel; der sichtbare Programmname lautet pcMonitor.
+
+## Sprachpakete vom 14. September 2026
+
+Acht zusätzliche vollständige Kataloge mit je 293 Texten und übersetzter HTML-Hilfe. Die arabische Hilfe verwendet Rechts-nach-links-Leserichtung. Fachbegriffe, Dateipfade und Platzhalter bleiben technisch kompatibel. Verfügbare Sprachen über Einstellungen → Verfügbare Sprachen suchen laden; jede Installation enthält immer Sprache und Hilfe. Programmversion 1.6.0 bleibt kompatibel; es ist kein Programmupdate für die neuen Sprachen erforderlich.
