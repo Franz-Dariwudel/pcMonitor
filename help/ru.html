@@ -1,9 +1,9 @@
 <!doctype html><html lang="ru" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Руководство pcMonitor</title>
 <style>body{font:1rem/1.7 system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1.5rem}h1,h2{line-height:1.35}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:.7rem;text-align:start;vertical-align:top}code,pre{direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}pre{white-space:pre-wrap}a{overflow-wrap:anywhere}</style></head><body>
-<h1>Руководство pcMonitor</h1><p>pcMonitor 1.6.0 · Русский · Josef Lehner</p>
+<h1>Руководство pcMonitor</h1><p>pcMonitor 1.6.1 · Русский · Josef Lehner</p>
 <h2>Требования и запуск</h2>
-<p>pcMonitor 1.6.0 работает в Linux Mint с Python 3.10 или новее, PyGObject и GTK 4.8 или новее. Установите python3, python3-gi и gir1.2-gtk-4.0. Для печати нужны python3-cairo и python3-gi-cairo. Скомпилированная версия требует Python 3.12. Программа только читает данные, не устанавливает драйверы и не изменяет оборудование.</p>
+<p>pcMonitor 1.6.1 работает в Linux Mint с Python 3.10 или новее, PyGObject и GTK 4.8 или новее. Установите python3, python3-gi и gir1.2-gtk-4.0. Для печати нужны python3-cairo и python3-gi-cairo. Скомпилированная версия требует Python 3.12. Программа только читает данные, не устанавливает драйверы и не изменяет оборудование.</p>
 <p>В папке программы используйте команды ниже. --version показывает версию; --check проверяет ресурсы; --scan выводит снимок JSON и завершает работу. --admin запрашивает через pkexec права для модуля чтения; интерфейс остаётся в обычном сеансе. --help описывает параметры. Код выхода 0 означает успех, 1 — сбой проверки или запрошенной авторизации. Снимок может содержать серийные номера и сетевые адреса.</p>
 <pre>python3 -m monitor
 python3 -m monitor --help
@@ -73,4 +73,4 @@ python3 -m monitor --admin</pre>
 <h2>Распространение и лицензия</h2>
 <p>Автор: Josef Lehner. GPL-3.0-only; полный текст в LICENSE. Исходники и устанавливаемая версия доступны в выпусках GitHub. После распаковки установите программу в пустую папку командой ниже. Существующая установка не перезаписывается. Скомпилированная версия требует Python 3.12 и GTK/PyGObject; это не автономный нативный исполняемый файл.</p>
 <pre>python3 install.py --directory /absolute/path/pcMonitor</pre>
-<p><a href="https://github.com/Franz-Dariwudel/pcMonitor/releases">GitHub</a> · <a href="https://dogtruck.eu">dogtruck.eu</a></p></body></html>
+<p><a href="https://github.com/Franz-Dariwudel/pcMonitor/releases">GitHub</a> · <a href="https://dogtruck.eu">dogtruck.eu</a></p><h2>Установить язык и справку — 1.6.1</h2><p>Источник языков закреплён за GitHub. Файлы сначала сохраняются в download/languages/ и download/help/ внутри папки программы, проверяются и устанавливаются оттуда. Они сохраняются для последующей локальной установки. Каждый поиск запрашивает свежий каталог.</p></body></html>

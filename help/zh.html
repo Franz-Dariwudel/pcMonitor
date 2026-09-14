@@ -1,9 +1,9 @@
 <!doctype html><html lang="zh" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>pcMonitor 使用指南</title>
 <style>body{font:1rem/1.7 system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1.5rem}h1,h2{line-height:1.35}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:.7rem;text-align:start;vertical-align:top}code,pre{direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}pre{white-space:pre-wrap}a{overflow-wrap:anywhere}</style></head><body>
-<h1>pcMonitor 使用指南</h1><p>pcMonitor 1.6.0 · 简体中文 · Josef Lehner</p>
+<h1>pcMonitor 使用指南</h1><p>pcMonitor 1.6.1 · 简体中文 · Josef Lehner</p>
 <h2>要求与启动</h2>
-<p>pcMonitor 1.6.0 适用于 Linux Mint，需要 Python 3.10 或更高版本、PyGObject 和 GTK 4.8 或更高版本。请安装 python3、python3-gi 和 gir1.2-gtk-4.0。打印还需要 python3-cairo 和 python3-gi-cairo。编译版需要 Python 3.12。程序只读取信息，不安装驱动或更改硬件。</p>
+<p>pcMonitor 1.6.1 适用于 Linux Mint，需要 Python 3.10 或更高版本、PyGObject 和 GTK 4.8 或更高版本。请安装 python3、python3-gi 和 gir1.2-gtk-4.0。打印还需要 python3-cairo 和 python3-gi-cairo。编译版需要 Python 3.12。程序只读取信息，不安装驱动或更改硬件。</p>
 <p>在程序文件夹中使用下列命令。--version 显示版本；--check 检查资源；--scan 输出一次 JSON 快照后退出。--admin 通过 pkexec 为读取模块请求权限，界面仍以普通用户运行。--help 说明参数。成功返回 0；检查失败或所请求的管理员授权失败返回 1。快照可能包含序列号和网络地址。</p>
 <pre>python3 -m monitor
 python3 -m monitor --help
@@ -73,4 +73,4 @@ python3 -m monitor --admin</pre>
 <h2>发行与许可证</h2>
 <p>作者：Josef Lehner。采用 GPL-3.0-only，完整文本见 LICENSE。源代码和可安装版本位于 GitHub 发行页面。解压后，使用下列命令安装到空文件夹。现有安装不会被覆盖。编译版需要 Python 3.12 和 GTK/PyGObject，并非独立的原生可执行程序。</p>
 <pre>python3 install.py --directory /absolute/path/pcMonitor</pre>
-<p><a href="https://github.com/Franz-Dariwudel/pcMonitor/releases">GitHub</a> · <a href="https://dogtruck.eu">dogtruck.eu</a></p></body></html>
+<p><a href="https://github.com/Franz-Dariwudel/pcMonitor/releases">GitHub</a> · <a href="https://dogtruck.eu">dogtruck.eu</a></p><h2>安装语言和帮助 — 1.6.1</h2><p>语言来源固定为 GitHub。文件先保存到程序文件夹内的 download/languages/ 和 download/help/，检查后再从这些位置安装。文件会保留，供以后本地安装使用。每次搜索都会请求最新目录。</p></body></html>

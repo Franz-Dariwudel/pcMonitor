@@ -1,9 +1,9 @@
 <!doctype html><html lang="tr" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>pcMonitor kullanım kılavuzu</title>
 <style>body{font:1rem/1.7 system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1.5rem}h1,h2{line-height:1.35}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:.7rem;text-align:start;vertical-align:top}code,pre{direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}pre{white-space:pre-wrap}a{overflow-wrap:anywhere}</style></head><body>
-<h1>pcMonitor kullanım kılavuzu</h1><p>pcMonitor 1.6.0 · Türkçe · Josef Lehner</p>
+<h1>pcMonitor kullanım kılavuzu</h1><p>pcMonitor 1.6.1 · Türkçe · Josef Lehner</p>
 <h2>Gereksinimler ve başlatma</h2>
-<p>pcMonitor 1.6.0; Linux Mint, Python 3.10 veya üstü, PyGObject ve GTK 4.8 veya üstü gerektirir. python3, python3-gi ve gir1.2-gtk-4.0 kurun. Yazdırma için python3-cairo ve python3-gi-cairo gerekir. Derlenmiş sürüm Python 3.12 gerektirir. Program yalnızca bilgi okur; sürücü kurmaz veya donanımı değiştirmez.</p>
+<p>pcMonitor 1.6.1; Linux Mint, Python 3.10 veya üstü, PyGObject ve GTK 4.8 veya üstü gerektirir. python3, python3-gi ve gir1.2-gtk-4.0 kurun. Yazdırma için python3-cairo ve python3-gi-cairo gerekir. Derlenmiş sürüm Python 3.12 gerektirir. Program yalnızca bilgi okur; sürücü kurmaz veya donanımı değiştirmez.</p>
 <p>Program klasöründe aşağıdaki komutları kullanın. --version sürümü gösterir; --check kaynakları denetler; --scan JSON anlık görüntüsü üretip çıkar. --admin okuyucu için pkexec üzerinden izin ister; arayüz normal kullanıcı oturumunda kalır. --help seçenekleri açıklar. Başarı durumunda çıkış kodu 0, denetim veya istenen yetki başarısızsa 1’dir. Anlık görüntü seri numaraları ve ağ adresleri içerebilir.</p>
 <pre>python3 -m monitor
 python3 -m monitor --help
@@ -73,4 +73,4 @@ python3 -m monitor --admin</pre>
 <h2>Dağıtım ve lisans</h2>
 <p>Yazar: Josef Lehner. GPL-3.0-only; tam metin LICENSE içindedir. Kaynak kod ve kurulabilir sürüm GitHub yayınlarında bulunur. Paketi açtıktan sonra aşağıdaki komutla boş bir klasöre kurun. Mevcut kurulumların üzerine yazılmaz. Derlenmiş sürüm Python 3.12 ve GTK/PyGObject gerektirir; bağımsız yerel çalıştırılabilir dosya değildir.</p>
 <pre>python3 install.py --directory /absolute/path/pcMonitor</pre>
-<p><a href="https://github.com/Franz-Dariwudel/pcMonitor/releases">GitHub</a> · <a href="https://dogtruck.eu">dogtruck.eu</a></p></body></html>
+<p><a href="https://github.com/Franz-Dariwudel/pcMonitor/releases">GitHub</a> · <a href="https://dogtruck.eu">dogtruck.eu</a></p><h2>Dil ve yardım kur — 1.6.1</h2><p>Dil kaynağı GitHub olarak sabittir. Dosyalar önce program klasöründeki download/languages/ ve download/help/ içine kaydedilir, doğrulanır ve oradan kurulur. Daha sonra yerel kurulum için saklanır. Her arama güncel bir katalog ister.</p></body></html>
