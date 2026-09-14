@@ -1,9 +1,9 @@
 <!doctype html><html lang="zh" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>pcMonitor 使用指南</title>
 <style>body{font:1rem/1.7 system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1.5rem}h1,h2{line-height:1.35}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:.7rem;text-align:start;vertical-align:top}code,pre{direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}pre{white-space:pre-wrap}a{overflow-wrap:anywhere}</style></head><body>
-<h1>pcMonitor 使用指南</h1><p>pcMonitor 1.6.1 · 简体中文 · Josef Lehner</p>
+<h1>pcMonitor 使用指南</h1><p>pcMonitor 1.7.4 · 简体中文 · Josef Lehner</p>
 <h2>要求与启动</h2>
-<p>pcMonitor 1.6.1 适用于 Linux Mint，需要 Python 3.10 或更高版本、PyGObject 和 GTK 4.8 或更高版本。请安装 python3、python3-gi 和 gir1.2-gtk-4.0。打印还需要 python3-cairo 和 python3-gi-cairo。编译版需要 Python 3.12。程序只读取信息，不安装驱动或更改硬件。</p>
+<p>pcMonitor 1.7.4 适用于 Linux Mint，需要 Python 3.10 或更高版本、PyGObject 和 GTK 4.8 或更高版本。请安装 python3、python3-gi 和 gir1.2-gtk-4.0。打印还需要 python3-cairo 和 python3-gi-cairo。编译版需要 Python 3.12。程序只读取信息，不安装驱动或更改硬件。</p>
 <p>在程序文件夹中使用下列命令。--version 显示版本；--check 检查资源；--scan 输出一次 JSON 快照后退出。--admin 通过 pkexec 为读取模块请求权限，界面仍以普通用户运行。--help 说明参数。成功返回 0；检查失败或所请求的管理员授权失败返回 1。快照可能包含序列号和网络地址。</p>
 <pre>python3 -m monitor
 python3 -m monitor --help
@@ -17,7 +17,7 @@ python3 -m monitor --admin</pre>
 <h2>设置、语言与帮助</h2>
 <p>设置保存在 config/settings.json，带时间和上下文的错误保存在 logs/。程序遵循系统主题。languages/&lt;code&gt;.json 是 UTF-8 JSON 对象，键和值都必须是文本，并包含 language.name。打开设置时会重新发现语言。只有一种有效语言时自动选择；有多种时保留有效选择，否则使用德语。缺失的键使用英语文本。</p>
 <p>帮助独立从 help/&lt;code&gt;.html 中查找，只打开所选语言；缺失时不会自动改用英语。默认服务器为 https://github.com/Franz-Dariwudel/pcMonitor。查找可用语言后，安装语言及配套帮助。安装立即保存，即使随后取消设置对话框也不会撤销；要改变界面语言，请选择语言并保存。</p>
-<p>也可选择本地 JSON 与旁边的 HTML，或使用相邻的 languages/ 和 help/ 文件夹。每个下载文件最大 2 MiB，使用不允许重定向的 HTTPS，并检查 SHA256 和内容。只接受无脚本、表单或外部嵌入的静态 HTML。两个文件都会在替换前验证。写入失败会回滚；两次替换之间断电无法保证完全原子性。回滚失败时保留 .pack-backup 文件。同一服务器提供的校验和不能代替独立签名。更新需手动触发，程序可以离线运行。</p>
+<p>每个下载文件最大 2 MiB，使用不允许重定向的 HTTPS，并检查 SHA256 和内容。只接受无脚本、表单或外部嵌入的静态 HTML。两个文件都会在替换前验证。写入失败会回滚；两次替换之间断电无法保证完全原子性。回滚失败时保留 .pack-backup 文件。同一服务器提供的校验和不能代替独立签名。更新需手动触发，程序可以离线运行。</p>
 <h2>数据与限制</h2>
 <p>分类包括 CPU、RAM 及模块、主板、BIOS/UEFI、GPU、存储、网络、USB、显示器、PCIe、传感器及序列号。lscpu 和 lspci 提供补充信息；dmidecode 和 smartctl 可能需要管理员权限。可选工具包括 pciutils、dmidecode、smartmontools、pulseaudio-utils、ethtool、iw、nvme-cli 和 mokutil。只安装针对本机诊断所提示的工具。</p>
 <p>可用 RAM 包含可回收缓存；VRAM 仅指专用显存。首选 EDID 模式不是当前分辨率。风扇百分比不是每分钟转数。未标记的电压通道不会被猜测为 12/5/3.3 V 电源轨。外部查询有时间限制；部分静态数据最多缓存五分钟。SMART 不启动测试，并在支持时避免唤醒待机磁盘。虚拟机可能无法提供主机信息。</p>
@@ -73,4 +73,5 @@ python3 -m monitor --admin</pre>
 <h2>发行与许可证</h2>
 <p>作者：Josef Lehner。采用 GPL-3.0-only，完整文本见 LICENSE。源代码和可安装版本位于 GitHub 发行页面。解压后，使用下列命令安装到空文件夹。现有安装不会被覆盖。编译版需要 Python 3.12 和 GTK/PyGObject，并非独立的原生可执行程序。</p>
 <pre>python3 install.py --directory /absolute/path/pcMonitor</pre>
-<p><a href="https://github.com/Franz-Dariwudel/pcMonitor/releases">GitHub</a> · <a href="https://dogtruck.eu">dogtruck.eu</a></p><h2>安装语言和帮助 — 1.6.1</h2><p>语言来源固定为 GitHub。文件先保存到程序文件夹内的 download/languages/ 和 download/help/，检查后再从这些位置安装。文件会保留，供以后本地安装使用。每次搜索都会请求最新目录。</p></body></html>
+<p><a href="https://github.com/Franz-Dariwudel/pcMonitor/releases">GitHub</a> · <a href="https://dogtruck.eu">dogtruck.eu</a></p><h2>安装语言和帮助 — 1.7.4</h2><p>语言及对应帮助先保存到 ~/Downloads/languages/ 和 ~/Downloads/help/ 并进行验证。安装成功后仅删除这些下载文件。安装失败时保留文件。</p><p>缺失的信息及其具体原因直接以红色显示在相关设备旁。单独的诊断概览已移除。这些信息仍包含在 CSV 和打印输出中。</p><p>已具有管理员权限，但仍无法读取此项信息。请检查访问限制并手动刷新。</p><h2>扩展 Linux 清单 1.7.4</h2><p>新增类别：Linux 系统、分区和文件系统、监听的网络服务、内核及安全。扩展了 CPU、NUMA、RAM/ECC、SMART/NVMe、DNS/DHCP、统计、Wi-Fi、蓝牙和 GPU 数据。所有数据也包含在 CSV 和打印输出中。</p><p>CPU 使用率需要两次测量。ECC 报告不能证明纠错已启用。加密状态仅指可见块设备路径。没有 IOMMU 组表示状态未知。监听套接字不能证明能通过防火墙访问。缺少权限或驱动支持的数据仍不可用。</p><p>可选工具：util-linux、iproute2、network-manager、ethtool、iw、dmidecode、smartmontools、nvme-cli、mokutil、tpm2-tools 和 BlueZ。HM401 表示缺少工具。仅执行有超时限制和缓存的只读查询，不安装软件、不扫描 Wi-Fi、不配对，也不修改 TPM。不可用数据以红色显示。</p><p>所有类别均有专用 3D 图标。蓝牙在侧栏和硬件菜单中有独立类别。串行接口类别显示 RS-232 接头。搜索、CSV 和打印均使用新的蓝牙分类。</p><p>搜索可用语言，选择一种语言并安装。语言文件和对应 HTML 帮助一起从 GitHub 下载。已包含德语和英语。</p><p>HM506：语言和帮助已安装，但下载文件未完全删除。请检查 Downloads/languages/ 和 Downloads/help/，必要时手动删除文件。</p><section><h2>DEB · Linux Mint</h2><p>DEB 安装：在现有用户桌面和应用菜单中添加“pcMonitor”和“pcMonitor (Admin)”两个启动器。管理员启动器请求授权以运行只读助手，窗口仍以普通用户身份运行。程序文件：/usr/lib/pcmonitor。个人数据、语言和帮助：~/.local/share/pcMonitor/。下载：~/Downloads/。使用 sudo apt remove pcmonitor 卸载会删除软件包文件及安装时创建的桌面链接。使用期间创建的个人数据将保留。如有文件冲突或权限不足，软件包管理器会显示相关路径；解决问题后重试。</p></section>
+</body></html>
