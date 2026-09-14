@@ -4,8 +4,16 @@
   "python": "3.12",
   "gtk": ">=4.8",
   "languages": [
+    "ar",
     "de",
-    "en"
+    "en",
+    "es",
+    "fr",
+    "hi",
+    "pt",
+    "ru",
+    "tr",
+    "zh"
   ],
   "personal_data": false
 }
