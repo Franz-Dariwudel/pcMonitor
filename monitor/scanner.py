@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 import json
+import os
 import platform
 import re
 import shutil
@@ -55,7 +56,7 @@ class Scanner:
             if self._denied_dmi[key] not in self.issues:self.issues.append(self._denied_dmi[key])
             return default
         try:
-            return Path(path).read_text(encoding='utf-8', errors='replace')[:16384].strip()
+            return Path(path).read_text(encoding='utf-8', errors='replace')[:1048576].strip()
         except FileNotFoundError:
             return default
         except OSError as exc:
@@ -87,6 +88,7 @@ class Scanner:
         try:ports = self.hardware.collect(ports)
         except Exception as exc:self.issues.append(f'HM204: Hardware ({type(exc).__name__})')
         system = self.system_info()
+        system['admin'] = os.geteuid() == 0
         from .diagnostics import Diagnostics
         ports = Diagnostics(self).annotate(ports,system,self.issues)
         return Snapshot(ports, system, self.issues.copy(), time.time())

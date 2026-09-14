@@ -12,7 +12,7 @@ from pathlib import Path
 import re
 import tempfile
 import uuid
-from .constants import ROOT
+from .constants import ROOT, DOWNLOAD_ROOT
 from urllib.parse import urlsplit, urljoin
 from urllib.request import build_opener, HTTPRedirectHandler, Request
 
@@ -241,9 +241,21 @@ def install_online_pair(server, code, directory, help_directory, download_direct
     for content, descriptor in ((data, entry), (html, entry['help'])):
         if hashlib.sha256(content).hexdigest().lower() != descriptor['sha256'].lower():
             raise PackError('HM503')
-    # Erst ein geprüftes Paar unter download/ speichern. Es bleibt für spätere
-    # lokale Installationen erhalten; ein Fehler verändert die aktive Sprache nicht.
-    downloads=Path(download_directory) if download_directory is not None else ROOT/'download'
+    # Nur das aktuelle Downloadpaar nach erfolgreicher Installation entfernen.
+    downloads=Path(download_directory) if download_directory is not None else DOWNLOAD_ROOT
     install_pair(data, html, code, downloads/'languages', downloads/'help')
-    return install_local_pair(downloads/'languages'/(code+'.json'), directory, help_directory,
-                              (entry['sha256'], entry['help']['sha256']))
+    result = install_local_pair(downloads/'languages'/(code+'.json'), directory, help_directory,
+                                (entry['sha256'], entry['help']['sha256']))
+    for folder, suffix, digest, active in (
+            ('languages', '.json', entry['sha256'], Path(directory)),
+            ('help', '.html', entry['help']['sha256'], Path(help_directory))):
+        source=downloads/folder/(code+suffix)
+        # Bei identischem Ziel niemals installierte Dateien löschen.
+        if source.resolve() == (active/(code+suffix)).resolve(): continue
+        try:
+            if source.is_symlink() or hashlib.sha256(source.read_bytes()).hexdigest().lower()!=digest.lower():
+                raise OSError('Downloaded file changed before cleanup')
+            source.unlink()
+        except OSError as exc:
+            raise PackError('HM506') from exc
+    return result

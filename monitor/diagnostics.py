@@ -12,7 +12,7 @@ import shutil
 
 PACKAGES={'lscpu':'util-linux','lspci':'pciutils','dmidecode':'dmidecode',
           'smartctl':'smartmontools','pactl':'pulseaudio-utils',
-          'ip':'iproute2','ethtool':'ethtool','iw':'iw','bluetoothctl':'bluez','nvme':'nvme-cli','mokutil':'mokutil'}
+          'ip':'iproute2','ethtool':'ethtool','iw':'iw','bluetoothctl':'bluez','nvme':'nvme-cli','mokutil':'mokutil','lsblk':'util-linux','ss':'iproute2','nmcli':'network-manager','tpm2_getcap':'tpm2-tools'}
 
 
 def diagnostic_lines(items,tr):
@@ -30,6 +30,9 @@ class Diagnostics:
         result=[]
         for port in ports:
             data=dict(port.details);notes=[]
+            # Hinweise richten sich nach wirksamen Leserechten, nicht nach dem Startwunsch.
+            if data.get('note') in ('note.dmi','note.dmi.active','note.disk','note.disk.active'):
+                data['note']=data['note'].removesuffix('.active')+('.active' if self.privileged else '')
             def add(kind,key,**args):
                 code={'tool':'HM401','driver':'HM402','access':'HM403','data':'HM404','query':'HM405'}[kind]
                 item={'code':code,'kind':kind,'message':'diagnosis.'+key,'args':args}
@@ -40,8 +43,11 @@ class Diagnostics:
                 return True
             if port.state!='empty':
                 if port.group=='cpu':require('lscpu')
+                if port.group=='filesystems':require('lsblk')
+                if port.group=='services':require('ss')
+                if port.group=='security' and (self.s.sys/'class/tpm/tpm0').exists():require('tpm2_getcap')
                 if port.group=='network' and not port.id.startswith('bluetooth:'):
-                    require('ip')
+                    require('ip');require('nmcli')
                     if not port.id.startswith('logical:'):require('ethtool')
                     if data.get('wireless'):require('iw')
                 if port.id.startswith('bluetooth:') and port.id!='bluetooth:missing':require('bluetoothctl')
@@ -88,7 +94,8 @@ class Diagnostics:
                 if source and source==self.s.sys/'class/dmi/id':
                     denied=[issue for issue in issues if 'PermissionError' in issue and str(source)+'/' in issue]
                     fields={'mainboard':('board_',),'bios':('bios_',),'identity':('product_','chassis_')}.get(port.group,())
-                    if any(any('/'+prefix in issue for prefix in fields) for issue in denied):add('access','admin')
+                    if any(any('/'+prefix in issue for prefix in fields) for issue in denied):
+                        add('access','access_active' if self.privileged else 'admin')
                     elif any(k in data and not data[k] for k in ('serial_number','uuid','firmware','model')):
                         add('data','firmware_data')
             # Frühere Sammelmeldungen ohne eindeutige Ursache ersetzen.

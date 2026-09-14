@@ -38,7 +38,10 @@ GPU_FIELDS={
  'pcie_width':('PCI','GPU Link Info','Link Width','Current'),
  'pcie_width_max':('PCI','GPU Link Info','Link Width','Max'),
  'performance_state':('Performance State',),'gpu_uuid':('GPU UUID',),
- 'temperature':('Temperature','GPU Current Temp',)}
+ 'temperature':('Temperature','GPU Current Temp',),
+ 'encoder_util':('Utilization','Encoder'), 'decoder_util':('Utilization','Decoder'),
+ 'gpu_memory_temperature':('Temperature','GPU Memory Current Temp'),
+ 'gpu_hotspot_temperature':('Temperature','GPU Hot Spot Temp')}
 
 
 def usable(value):
@@ -186,9 +189,10 @@ class Extended:
             driver=p/'device/driver'
             d={'address':address,'driver':driver.resolve().name if driver.exists() else '',
                'bluetooth_powered':{'yes':'value.enabled','no':'value.disabled'}.get(info.get('Powered'),''),
-               'model':info.get('Name',''),'source':str(p),'bluetooth':'value.enabled'}
-            ports.append(self.h.record('network',d,key='bluetooth:'+p.name,name='Bluetooth · '+p.name))
-        if not ports:ports.append(self.h.record('network',{'availability':'value.bluetooth_not_reported','source':str(self.s.sys/'class/bluetooth')},key='bluetooth:missing',name='Bluetooth',state='unknown'))
+               'model':info.get('Name',''),'source':str(p),'bluetooth':'value.enabled',
+               'bluetooth_controller':'\n'.join(k+': '+info[k] for k in ('Manufacturer','Version','Modalias') if k in info)}
+            ports.append(self.h.record('bluetooth',d,key='bluetooth:'+p.name,name='Bluetooth · '+p.name))
+        if not ports:ports.append(self.h.record('bluetooth',{'availability':'value.bluetooth_not_reported','source':str(self.s.sys/'class/bluetooth')},key='bluetooth:missing',name='Bluetooth',state='unknown'))
         return ports
 
     def nvme(self,d,name):
@@ -197,13 +201,15 @@ class Extended:
         d['nvme_controller']=controller
         for key,filename in {'nvme_transport':'transport','nvme_state':'state','nvme_nqn':'subsysnqn'}.items():d[key]=self.s.read(path/filename)
         self.pci_link(d,path/'device')
-        for key in ('nvme_namespaces','nvme_capacity','nvme_critical_warning','nvme_available_spare','nvme_percentage_used','nvme_data_units_read','nvme_data_units_written','nvme_power_cycles','nvme_power_on_hours','nvme_unsafe_shutdowns','nvme_media_errors','nvme_num_err_log_entries'):d[key]=''
+        for key in ('nvme_namespaces','nvme_capacity','nvme_critical_warning','nvme_available_spare','nvme_percentage_used','nvme_data_units_read','nvme_data_units_written','nvme_power_cycles','nvme_power_on_hours','nvme_unsafe_shutdowns','nvme_media_errors','nvme_num_err_log_entries','nvme_available_spare_threshold','nvme_namespace_ids'):d.setdefault(key,'')
         if os.geteuid()!=0:return
         info=self.json(['nvme','id-ctrl','/dev/'+controller,'-o','json'],ttl=300)
         if isinstance(info,dict):
             for key,source in {'model':'mn','serial_number':'sn','firmware':'fr','nvme_version':'ver','nvme_namespaces':'nn','nvme_capacity':'tnvmcap'}.items():
                 if source in info:d[key]=str(info[source]).strip()
+        namespaces=self.json(['nvme','list-ns','/dev/'+controller,'--all','-o','json'],ttl=60)
+        if isinstance(namespaces,dict):d['nvme_namespace_ids']=json.dumps(namespaces,ensure_ascii=False)
         info=self.json(['nvme','smart-log','/dev/'+controller,'-o','json'])
         if isinstance(info,dict):
-            for key in ('critical_warning','available_spare','percentage_used','data_units_read','data_units_written','power_cycles','power_on_hours','unsafe_shutdowns','media_errors','num_err_log_entries'):
+            for key in ('critical_warning','available_spare','available_spare_threshold','percentage_used','data_units_read','data_units_written','power_cycles','power_on_hours','unsafe_shutdowns','media_errors','num_err_log_entries'):
                 if key in info:d['nvme_'+key]=str(info[key])

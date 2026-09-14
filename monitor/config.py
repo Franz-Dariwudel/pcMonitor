@@ -6,7 +6,7 @@ from logging.handlers import RotatingFileHandler
 import os
 from pathlib import Path
 import tempfile
-from .constants import ROOT, LANGUAGE_SERVER
+from .constants import ROOT, DATA_ROOT, LANGUAGE_SERVER
 
 
 def setup_logs():
@@ -14,8 +14,8 @@ def setup_logs():
     if logger.handlers:return logger
     logger.setLevel(logging.INFO)
     try:
-        (ROOT/'logs').mkdir(exist_ok=True)
-        handler=RotatingFileHandler(ROOT/'logs/monitor.log',maxBytes=500000,backupCount=3,encoding='utf-8')
+        (DATA_ROOT/'logs').mkdir(parents=True,exist_ok=True)
+        handler=RotatingFileHandler(DATA_ROOT/'logs/monitor.log',maxBytes=500000,backupCount=3,encoding='utf-8')
     except OSError:
         handler=logging.StreamHandler()
         print('HM101: logs/ ist nicht beschreibbar / log directory is not writable.')
@@ -25,7 +25,7 @@ def setup_logs():
 
 
 def load_settings(path=None):
-    path=path or ROOT/'config/settings.json'
+    path=path or DATA_ROOT/'config/settings.json'
     standard={'language':'de','show_empty':False,'interval':3,'language_server':LANGUAGE_SERVER}
     try:
         raw=json.loads(Path(path).read_text(encoding='utf-8'))
@@ -42,7 +42,7 @@ def load_settings(path=None):
 
 
 def save_settings(settings,path=None):
-    target=Path(path or ROOT/'config/settings.json')
+    target=Path(path or DATA_ROOT/'config/settings.json')
     target.parent.mkdir(parents=True,exist_ok=True)
     fd,tmp=tempfile.mkstemp(prefix='.settings-',dir=target.parent)
     try:
@@ -57,7 +57,8 @@ def save_settings(settings,path=None):
 class Translator:
     """Alle gültigen *.json-Kataloge neu erkennen; Englisch ist der Fallback."""
     def __init__(self,language='de',directory=None):
-        self.directory=Path(directory or ROOT/'languages')
+        self.directory=Path(directory or DATA_ROOT/'languages')
+        self.bundled=ROOT/'languages' if directory is None and DATA_ROOT != ROOT else None
         self.language=language
         self.catalogs={}
         self.problems=[]
@@ -66,7 +67,9 @@ class Translator:
     def reload(self):
         self.problems=[]
         catalogs={}
-        try:paths=sorted(self.directory.glob('*.json'))
+        try:
+            paths=sorted(self.bundled.glob('*.json')) if self.bundled else []
+            paths+=sorted(self.directory.glob('*.json'))
         except OSError:paths=[]
         for p in paths:
             try:

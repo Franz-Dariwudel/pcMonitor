@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0-only
-"""GTK-Einstellungen für lokale und online angebotene Sprachpakete."""
+"""GTK-Einstellungen für Sprachpakete aus der festen GitHub-Quelle."""
 from concurrent.futures import ThreadPoolExecutor
 import logging
-from gi.repository import Gtk, GLib, Gio
-from .constants import ROOT, LANGUAGE_SERVER
-from .language_packs import fetch_manifest, install_local_pair, install_online_pair, PackError
+from gi.repository import Gtk, GLib
+from .constants import DATA_ROOT, LANGUAGE_SERVER, DOWNLOAD_ROOT
+from .language_packs import fetch_manifest, install_online_pair, PackError
 
 
 def add_installer(window, dialog, box, refresh):
@@ -16,9 +16,7 @@ def add_installer(window, dialog, box, refresh):
     caption.add_css_class('heading'); box.append(caption)
     hint = Gtk.Label(label=t('packs.hint'), xalign=0, wrap=True, max_width_chars=64)
     box.append(hint)
-    local = Gtk.Button(label=t('packs.local'), halign=Gtk.Align.START)
-    box.append(local)
-    box.append(Gtk.Label(label=t('packs.download_hint'), xalign=0, wrap=True, max_width_chars=64))
+    box.append(Gtk.Label(label=t('packs.download_hint', directory=str(DOWNLOAD_ROOT)), xalign=0, wrap=True, max_width_chars=64))
     search = Gtk.Button(label=t('packs.search'), halign=Gtk.Align.START)
     box.append(search)
     choices = Gtk.ComboBoxText(); box.append(choices)
@@ -34,7 +32,7 @@ def add_installer(window, dialog, box, refresh):
 
     def run(operation, finished):
         busy[0] = True
-        for widget in (local, search, install): widget.set_sensitive(False)
+        for widget in (search, install): widget.set_sensitive(False)
         # Der Dialog bleibt bis zum Abschluss offen; die Hardwareanzeige läuft weiter.
         dialog.set_response_sensitive(Gtk.ResponseType.OK, False)
         dialog.set_response_sensitive(Gtk.ResponseType.CANCEL, False)
@@ -43,7 +41,7 @@ def add_installer(window, dialog, box, refresh):
         def complete():
             if not alive[0]: return False
             busy[0] = False
-            for widget in (local, search): widget.set_sensitive(True)
+            search.set_sensitive(True)
             install.set_sensitive(bool(choices.get_active_id()))
             dialog.set_response_sensitive(Gtk.ResponseType.OK, True)
             dialog.set_response_sensitive(Gtk.ResponseType.CANCEL, True)
@@ -51,6 +49,7 @@ def add_installer(window, dialog, box, refresh):
             except Exception as exc:
                 code = exc.code if isinstance(exc, PackError) else 'HM504'
                 logging.getLogger('monitor').warning('%s: language installation (%s)', code, type(exc).__name__)
+                if code == 'HM506': refresh()
                 status.set_text(t('packs.error.' + code))
             return False
         future.add_done_callback(lambda _: GLib.idle_add(complete))
@@ -58,22 +57,6 @@ def add_installer(window, dialog, box, refresh):
     def installed(code):
         refresh()
         status.set_text(t('packs.success', code=code))
-
-    def choose(*_):
-        chooser = Gtk.FileChooserNative.new(t('packs.local'), dialog, Gtk.FileChooserAction.OPEN,
-                                             t('packs.install'), t('cancel'))
-        file_filter = Gtk.FileFilter(); file_filter.set_name('JSON'); file_filter.add_pattern('*.json')
-        chooser.add_filter(file_filter)
-        downloads=ROOT/'download/languages'
-        if downloads.is_dir():chooser.set_current_folder(Gio.File.new_for_path(str(downloads)))
-        dialog._language_chooser = chooser
-        def selected(c, response):
-            file = c.get_file() if response == Gtk.ResponseType.ACCEPT else None
-            path = file.get_path() if file else None
-            c.destroy()
-            if path and alive[0]:
-                run(lambda: install_local_pair(path, t.directory, ROOT/'help'), installed)
-        chooser.connect('response', selected); chooser.show()
 
     def found(entries):
         for code, entry in sorted(entries.items(), key=lambda item: item[1]['name'].casefold()):
@@ -89,9 +72,8 @@ def add_installer(window, dialog, box, refresh):
 
     def install_clicked(*_):
         code = choices.get_active_id()
-        if code: run(lambda: install_online_pair(LANGUAGE_SERVER, code, t.directory, ROOT/'help', ROOT/'download'), installed)
+        if code: run(lambda: install_online_pair(LANGUAGE_SERVER, code, t.directory, DATA_ROOT/'help', DOWNLOAD_ROOT), installed)
 
     choices.connect('changed', lambda *_: install.set_sensitive(bool(choices.get_active_id()) and not busy[0]))
-    local.connect('clicked', choose)
     search.connect('clicked', search_clicked)
     install.connect('clicked', install_clicked)

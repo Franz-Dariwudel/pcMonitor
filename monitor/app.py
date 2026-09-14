@@ -18,11 +18,11 @@ import gi
 gi.require_version('Gtk','4.0')
 gi.require_version('Gdk','4.0')
 from gi.repository import Gtk, Gdk, Gio, GLib
-from .constants import ROOT, VERSION, APP_ID, APP_NAME, AUTHOR, WEBSITE
+from .constants import ROOT, VERSION, APP_ID, APP_NAME, AUTHOR, WEBSITE, help_path
 from .config import Translator, load_settings, save_settings, setup_logs
 from .scanner import Scanner, Snapshot
 
-GROUPS=('cpu','ram','mainboard','bios','gpu','storage','network','usb','display','pcie','temperature','identity','audio','typec','serial')
+GROUPS=('linux','cpu','ram','mainboard','bios','gpu','storage','network','bluetooth','usb','display','pcie','temperature','identity','audio','typec','serial','filesystems','services','kernel','security')
 STATES=('connected','empty','unknown','error')
 
 
@@ -345,7 +345,7 @@ class MonitorWindow(Gtk.ApplicationWindow):
         self.right_scroll.get_vadjustment().set_value(position)
 
     def icon(self,group,size):
-        asset={'audio':'pcie','typec':'usb','serial':'network'}.get(group,group)
+        asset={'serial':'serial-rs232'}.get(group,group)
         path=ROOT/'resources'/f'{asset}-3d.png'
         image=Gtk.Image.new_from_file(str(path))
         image.set_pixel_size(size)
@@ -366,11 +366,15 @@ class MonitorWindow(Gtk.ApplicationWindow):
         return self.tr(name[1:]) if name.startswith('@') else name
 
     def detail_row(self,key,value):
+        # Fehlende Angaben hervorheben; 0 und False bleiben gültige Werte.
+        missing=value is None or value=='' or (isinstance(value,str) and value in (
+            'value.unavailable','value.admin','value.dmi_missing','value.smart_missing',
+            'value.no_sensors','value.wait_sample','value.tpm_not_reported','value.bluetooth_not_reported'))
         if value is None or value=='':value=self.tr('not_available')
         if isinstance(value,str) and value.startswith('value.'):value=self.tr(value)
         box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=4)
         box.append(label(self.tr('field.'+key),'dim-label'))
-        value_label=label(value);value_label.set_selectable(True)
+        value_label=label(value,'error' if missing else None);value_label.set_selectable(True)
         box.append(value_label)
         self.right.append(box)
 
@@ -394,18 +398,18 @@ class MonitorWindow(Gtk.ApplicationWindow):
             for port in members:
                 self.right.append(Gtk.Separator())
                 self.right.append(label(self.display_name(port.name),'title-2'))
-                self.right.append(label(t(port.state),'dim-label'))
+                self.right.append(label(t(port.state),'error' if port.state in ('unknown','error') else 'dim-label'))
                 if port.device:self.right.append(label(port.device,'title-3'))
-                if port.details.get('note'):self.right.append(label(t(port.details['note']),'dim-label'))
+                if port.details.get('note'):self.right.append(label(t(port.details['note']),'error' if port.state in ('unknown','error') else 'dim-label'))
                 from .diagnostics import diagnostic_lines
                 for heading,text in diagnostic_lines(port.details.get('diagnostics',[]),t):
-                    self.right.append(label(heading,'heading'))
-                    item=label(text);item.set_selectable(True);self.right.append(item)
+                    # Die konkrete Ursache direkt beim Gerät, ohne Diagnoseüberschrift.
+                    item=label(text,'error');item.set_selectable(True);self.right.append(item)
                 for key,value in port.details.items():
                     if key in ('note','diagnostics'):continue
                     if key=='serials':
                         self.right.append(label(t('field.serials'),'title-3'))
-                        if not value:self.right.append(label(t('not_available')))
+                        if not value:self.right.append(label(t('not_available'),'error'))
                         for item in value:
                             self.right.append(label(t('group.'+item['group'])+' · '+self.display_name(item['name']),'heading'))
                             serial=label(item['serial_number']);serial.set_selectable(True);self.right.append(serial)
@@ -423,13 +427,6 @@ class MonitorWindow(Gtk.ApplicationWindow):
                 summary.append(tile)
             self.right.append(summary)
             self.right.append(label(t('no_selection')))
-            affected=[p for p in self.snapshot.ports if p.details.get('diagnostics')]
-            if affected:
-                self.right.append(label(t('diagnosis.overview',count=len(affected)),'heading'))
-                for group in GROUPS:
-                    if any(p.group==group for p in affected):
-                        button=Gtk.Button(label=t('group.'+group),halign=Gtk.Align.START)
-                        button.connect('clicked',lambda *_ ,g=group:self.choose_group(g));self.right.append(button)
             if self.snapshot.system.get('virtual'):
                 note=label(t('vm'));note.add_css_class('warning');self.right.append(note)
             self.right.append(label(t('limitation'),'dim-label'))
@@ -445,8 +442,8 @@ class MonitorWindow(Gtk.ApplicationWindow):
             self.right.append(label(t('temperatures'),'heading'))
             sensors=self.snapshot.system.get('sensors',[])
             for name,value in sensors:self.right.append(label(f'{name}: {value:.1f} °C'))
-            if not sensors:self.right.append(label(t('no_sensors'),'dim-label'))
-        signature=(self.tr.language,tuple(self.snapshot.issues))
+            if not sensors:self.right.append(label(t('no_sensors'),'error'))
+        signature=(self.tr.language,bool(self.snapshot.system.get('admin')),tuple(self.snapshot.issues))
         if signature!=self._issues_signature:
             opened=False
             previous=self.issues_box.get_first_child()
@@ -459,9 +456,9 @@ class MonitorWindow(Gtk.ApplicationWindow):
                     if issue=='HM203':descriptions.append(t('admin.failed'))
                     elif issue.startswith('HM201:') and 'PermissionError' in issue:
                         path=issue.split('HM201: ',1)[1].split(' (',1)[0]
-                        descriptions.append(t('issue.access',name=Path(path).name))
+                        descriptions.append(t('issue.access_active' if self.snapshot.system.get('admin') else 'issue.access',name=Path(path).name))
                     else:descriptions.append(issue)
-                content=label('\n'.join(descriptions));content.set_selectable(True)
+                content=label('\n'.join(descriptions),'error');content.set_selectable(True)
                 expander.set_child(content);expander.set_expanded(opened);self.issues_box.append(expander)
             self._issues_signature=signature
 
@@ -520,7 +517,7 @@ class MonitorWindow(Gtk.ApplicationWindow):
 
     def show_help(self,*_):
         # Hilfe folgt ausschließlich der eingestellten Programmsprache.
-        target=ROOT/'help'/f'{self.tr.language}.html'
+        target=help_path(self.tr.language)
         self._launch_help(target if target.is_file() else None)
 
     def _launch_help(self,path):
@@ -638,11 +635,11 @@ def main(argv=None):
     if args.check:
         translator=Translator()
         problems=translator.problems.copy()
-        assets={'audio':'pcie','typec':'usb','serial':'network'}
+        assets={'serial':'serial-rs232'}
         for name in ('hardware-monitor.png','info-3d.png','overview-3d.png',*[assets.get(g,g)+'-3d.png' for g in GROUPS]):
             if not (ROOT/'resources'/name).is_file():problems.append('HM106: '+name)
         for code in ('de','en'):
-            path=ROOT/'help'/f'{code}.html'
+            path=help_path(code)
             try:
                 if '<html' not in path.read_text(encoding='utf-8').lower():raise ValueError('HTML')
             except (OSError,ValueError,UnicodeError):problems.append('HM105: '+str(path))

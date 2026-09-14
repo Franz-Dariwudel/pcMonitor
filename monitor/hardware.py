@@ -37,7 +37,15 @@ def memory_modules(text):
             'slot':'Locator','bank':'Bank Locator','module_capacity':'Size',
             'manufacturer':'Manufacturer','model':'Part Number','serial_number':'Serial Number',
             'memory_type':'Type','clock':'Speed','configured_clock':'Configured Memory Speed',
-            'form_factor':'Form Factor'}.items()})
+            'form_factor':'Form Factor','configured_voltage':'Configured Voltage',
+            'minimum_voltage':'Minimum Voltage','maximum_voltage':'Maximum Voltage',
+            'total_width':'Total Width','data_width':'Data Width','memory_array':'Array Handle'}.items()})
+    arrays={}
+    for block in re.split(r'\n\s*\n',text):
+        if 'Physical Memory Array' not in block:continue
+        handle=re.search(r'Handle (0x[0-9A-Fa-f]+)',block)
+        if handle:arrays[handle[1]]=clean(pairs(block).get('Error Correction Type',''))
+    for module in modules:module['ecc_type']=arrays.get(module['memory_array'],'')
     return modules
 
 
@@ -80,6 +88,9 @@ def smart_info(data):
     if hours is None:hours=nvme.get('power_on_hours')
     if temp is not None:result['temperature']=f'{temp} °C'
     if hours is not None:result['power_on_hours']=str(hours)
+    for key in ('critical_warning','available_spare','available_spare_threshold','percentage_used','data_units_read','data_units_written','power_cycles','power_on_hours','unsafe_shutdowns','media_errors','num_err_log_entries'):
+        if key in nvme:result['nvme_'+key]=str(nvme[key])
+    if 'power_cycle_count' in data:result['power_cycles']=str(data['power_cycle_count'])
     if 'percentage_used' in nvme:result['wear']=str(nvme['percentage_used'])+' %'
     rows=[]
     for row in data.get('ata_smart_attributes',{}).get('table',[]):
@@ -91,7 +102,7 @@ def smart_info(data):
 
 class Hardware:
     def __init__(self,scanner):
-        self.s=scanner;self.cache={};self.deadline=0
+        self.s=scanner;self.cache={};self.deadline=0;self.command_results={}
 
     def command(self,args,ttl=60):
         """Höchstens sechs Sekunden Zusatzarbeit je Scan, nie Shell-Kommandos."""
@@ -99,14 +110,20 @@ class Hardware:
         key=tuple(args);now=time.monotonic()
         if key in self.cache and now-self.cache[key][0]<ttl:return self.cache[key][1]
         remaining=self.deadline-now
-        if remaining<=0:return ''
+        if remaining<=0:
+            self.command_results[key]=False
+            return ''
         executable=shutil.which(args[0],path='/usr/sbin:/usr/bin:/sbin:/bin')
-        if not executable:return ''
+        if not executable:
+            self.command_results[key]=False
+            return ''
         try:
             r=subprocess.run([executable,*args[1:]],capture_output=True,text=True,errors='replace',
                              timeout=min(2,remaining),env={**os.environ,'LC_ALL':'C'})
             output=r.stdout
-        except (OSError,subprocess.SubprocessError):output=''
+            self.command_results[key]=getattr(r,'returncode',0)==0
+        except (OSError,subprocess.SubprocessError):
+            output='';self.command_results[key]=False
         self.cache[key]=(now,output)
         return output
 
@@ -151,7 +168,7 @@ class Hardware:
         total,available,free=size('MemTotal'),size('MemAvailable'),size('MemFree')
         result=[self.record('ram',{'memory_total':total,'memory_used':total-available if total is not None and available is not None else None,
                     'memory_available':available,'memory_free':free,'source':'/proc/meminfo'})]
-        text=self.command(['dmidecode','--type','17'],ttl=300) if os.geteuid()==0 else ''
+        text=self.command(['dmidecode','--type','memory'],ttl=300) if os.geteuid()==0 else ''
         modules=memory_modules(text)
         if not modules:
             result.append(self.record('ram',{'availability':'value.admin' if os.geteuid()!=0 else 'value.dmi_missing',
@@ -235,4 +252,5 @@ class Hardware:
             if serial:identifiers.append({'name':port.name,'group':port.group,'serial_number':serial})
         identity.details['serials']=identifiers
         from .extended import Extended
-        return Extended(self).enrich(ports+[identity])
+        from .system_data import SystemData
+        return SystemData(self).enrich(Extended(self).enrich(ports+[identity]))
