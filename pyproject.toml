@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pcMonitor"
+version = "1.6.0"
+description = "Read-only GTK 4 hardware port monitor for Linux Mint"
+requires-python = ">=3.10"
+license = {text = "GPL-3.0-only"}
+authors = [{name = "Josef Lehner"}]
+
+[tool.setuptools]
+packages = ["monitor"]

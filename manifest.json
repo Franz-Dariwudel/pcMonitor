@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "languages": {
+    "de": {
+      "version": 160,
+      "file": "languages/de.json",
+      "sha256": "33b20c934b2a9c56b9f80b11c3e1d83d6449edded3af7ddc53b42499cf9e6b3c",
+      "name": "Deutsch"
+    },
+    "en": {
+      "version": 160,
+      "file": "languages/en.json",
+      "sha256": "c36ee2035bf6d759148073e7af2051632e22ea9a50868282b03ca37ab88210d8",
+      "name": "English"
+    }
+  },
+  "help": {
+    "de": {
+      "version": 160,
+      "file": "help/de.html",
+      "sha256": "dfb59c0c8da118d16ac6311db5a97a8c161dd51677149bdcba8e2c03c83790a5"
+    },
+    "en": {
+      "version": 160,
+      "file": "help/en.html",
+      "sha256": "f23c238907ee883f33ffc7654aee51f6e0d6a1de75e6b950a39b042a8f0a9c5e"
+    }
+  }
+}

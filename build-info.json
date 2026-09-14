@@ -1,0 +1,11 @@
+{
+  "version": "1.6.0",
+  "kind": "source",
+  "python": "3.12",
+  "gtk": ">=4.8",
+  "languages": [
+    "de",
+    "en"
+  ],
+  "personal_data": false
+}
