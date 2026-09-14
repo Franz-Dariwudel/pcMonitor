@@ -1,0 +1,76 @@
+<!doctype html><html lang="zh" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pcMonitor 使用指南</title>
+<style>body{font:1rem/1.7 system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1.5rem}h1,h2{line-height:1.35}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:.7rem;text-align:start;vertical-align:top}code,pre{direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}pre{white-space:pre-wrap}a{overflow-wrap:anywhere}</style></head><body>
+<h1>pcMonitor 使用指南</h1><p>pcMonitor 1.6.0 · 简体中文 · Josef Lehner</p>
+<h2>要求与启动</h2>
+<p>pcMonitor 1.6.0 适用于 Linux Mint，需要 Python 3.10 或更高版本、PyGObject 和 GTK 4.8 或更高版本。请安装 python3、python3-gi 和 gir1.2-gtk-4.0。打印还需要 python3-cairo 和 python3-gi-cairo。编译版需要 Python 3.12。程序只读取信息，不安装驱动或更改硬件。</p>
+<p>在程序文件夹中使用下列命令。--version 显示版本；--check 检查资源；--scan 输出一次 JSON 快照后退出。--admin 通过 pkexec 为读取模块请求权限，界面仍以普通用户运行。--help 说明参数。成功返回 0；检查失败或所请求的管理员授权失败返回 1。快照可能包含序列号和网络地址。</p>
+<pre>python3 -m monitor
+python3 -m monitor --help
+python3 -m monitor --version
+python3 -m monitor --check
+python3 -m monitor --scan
+python3 -m monitor --admin</pre>
+<h2>使用方法</h2>
+<p>从左侧或“硬件”菜单选择分类，右侧显示设备与详情。搜索会过滤结果。空闲端口过滤器只影响显示，不会断开或删除设备。0 是有效值；未知状态和错误仍会显示。点击概览按钮可返回摘要。</p>
+<p>在“编辑 → 设置”中选择语言及 2、3、5 或 10 秒的刷新间隔。关闭自动刷新后，启动时读取一次，此后仅在点击“刷新”时读取。已经开始的查询仍可完成。“文件 → 退出”会正常关闭程序。帮助菜单提供所选语言的指南、版本、作者及组件信息。</p>
+<h2>设置、语言与帮助</h2>
+<p>设置保存在 config/settings.json，带时间和上下文的错误保存在 logs/。程序遵循系统主题。languages/&lt;code&gt;.json 是 UTF-8 JSON 对象，键和值都必须是文本，并包含 language.name。打开设置时会重新发现语言。只有一种有效语言时自动选择；有多种时保留有效选择，否则使用德语。缺失的键使用英语文本。</p>
+<p>帮助独立从 help/&lt;code&gt;.html 中查找，只打开所选语言；缺失时不会自动改用英语。默认服务器为 https://github.com/Franz-Dariwudel/pcMonitor。查找可用语言后，安装语言及配套帮助。安装立即保存，即使随后取消设置对话框也不会撤销；要改变界面语言，请选择语言并保存。</p>
+<p>也可选择本地 JSON 与旁边的 HTML，或使用相邻的 languages/ 和 help/ 文件夹。每个下载文件最大 2 MiB，使用不允许重定向的 HTTPS，并检查 SHA256 和内容。只接受无脚本、表单或外部嵌入的静态 HTML。两个文件都会在替换前验证。写入失败会回滚；两次替换之间断电无法保证完全原子性。回滚失败时保留 .pack-backup 文件。同一服务器提供的校验和不能代替独立签名。更新需手动触发，程序可以离线运行。</p>
+<h2>数据与限制</h2>
+<p>分类包括 CPU、RAM 及模块、主板、BIOS/UEFI、GPU、存储、网络、USB、显示器、PCIe、传感器及序列号。lscpu 和 lspci 提供补充信息；dmidecode 和 smartctl 可能需要管理员权限。可选工具包括 pciutils、dmidecode、smartmontools、pulseaudio-utils、ethtool、iw、nvme-cli 和 mokutil。只安装针对本机诊断所提示的工具。</p>
+<p>可用 RAM 包含可回收缓存；VRAM 仅指专用显存。首选 EDID 模式不是当前分辨率。风扇百分比不是每分钟转数。未标记的电压通道不会被猜测为 12/5/3.3 V 电源轨。外部查询有时间限制；部分静态数据最多缓存五分钟。SMART 不启动测试，并在支持时避免唤醒待机磁盘。虚拟机可能无法提供主机信息。</p>
+<ul>
+<li>集线器逻辑端口，包括内部端口；USB 2 和 USB 3 可能表示同一物理接口。</li>
+<li>驱动程序报告接口状态及支持的模式。已连接的显示器也可能被禁用。</li>
+<li>“已连接”表示存在链路信号，不代表可以访问互联网。被管理性禁用的接口可能无法报告网线是否存在。</li>
+<li>插孔检测需要驱动和音频服务器支持。“未知”不等于空闲。</li>
+<li>内核报告的 SATA 端口。即使文件系统未挂载，驱动器仍然处于连接状态。</li>
+<li>检测到的驱动器。这并不意味着已知其他空闲物理插槽。</li>
+<li>固件或内核报告的插槽。在虚拟机中可能是虚拟插槽。</li>
+<li>需要 Type-C 驱动支持。USB 设备也可能显示在 USB 分类中。</li>
+<li>已检测到 Thunderbolt 设备；授权状态单独显示。</li>
+<li>串口通常无法检测普通线缆另一端的设备。USB 转接器会被检测为已连接。</li>
+<li>固件报告的已安装内存模块。某些字段可能缺失；频率和传输速率保留原报告单位。</li>
+<li>固件字段可能缺失或包含占位值。读取序列号通常需要管理员权限。</li>
+<li>只有驱动报告专用显存时才显示 VRAM。共享 RAM 不会被当作 VRAM。</li>
+<li>管理员模式使用 smartmontools 读取 SMART，缓存最长保留 60 秒。不启动自检。</li>
+</ul>
+<h2>打印与 CSV</h2>
+<p>在右侧面板上方选择“所选分类”或“所有硬件数据”，然后点击“打印”或“保存 CSV”。使用点击时的快照，包含过滤器隐藏的设备和检测提示。CSV 使用带 BOM 的 UTF-8 与分号，可能的电子表格公式会按文本处理。打印会打开系统对话框；取消不会发送打印任务。</p>
+<h2>错误与恢复</h2>
+<p>不要将错误当作空闲端口。未受影响的功能会尽可能继续工作。请检查错误代码、相关文件及 logs/。修复数据前请备份。</p>
+<table><thead><tr><th>读取错误</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>HM001</code></td><td>缺少 Python 3，程序无法启动。请安装 python3。</td></tr>
+<tr><td><code>HM002</code></td><td>缺少 PyGObject 或 GTK 4，无法打开窗口。请安装 python3-gi 和 gir1.2-gtk-4.0。</td></tr>
+<tr><td><code>HM003</code></td><td>程序文件缺失或无法读取，启动中止。请恢复完整程序包。</td></tr>
+<tr><td><code>HM101</code></td><td>无法写入 logs/，日志改用标准错误输出。请检查权限和剩余空间。</td></tr>
+<tr><td><code>HM102</code></td><td>config/settings.json 无效或无法读取，使用默认设置。请备份后修复 JSON。</td></tr>
+<tr><td><code>HM103</code></td><td>语言文件缺失或无效，将被跳过。请检查 UTF-8、JSON 对象与文本值，然后重新打开设置。</td></tr>
+<tr><td><code>HM104</code></td><td>HM104：无法保存设置。请检查 config 的写入权限。</td></tr>
+<tr><td><code>HM105</code></td><td>HM105：所选语言的帮助不可用。请恢复 help/&lt;language&gt;.html 并检查默认浏览器。</td></tr>
+<tr><td><code>HM106</code></td><td>程序或端口图标缺失。请恢复 resources/ 中的文件。设备数据不变。</td></tr>
+<tr><td><code>HM199</code></td><td>意外程序错误可能阻止操作。请保留日志、记录操作经过并重新启动 pcMonitor。</td></tr>
+<tr><td><code>HM200</code></td><td>某一分类无法读取，其他分类继续运行并显示错误。请检查驱动和日志。</td></tr>
+<tr><td><code>HM201</code></td><td>无权读取 sysfs / procfs。请以管理员模式读取此字段。手动刷新或重新启动时会重试。</td></tr>
+<tr><td><code>HM202</code></td><td>存在音频硬件，但 pactl 或音频服务器不可用。请在已登录用户的图形会话中运行，不要使用 sudo。</td></tr>
+<tr><td><code>HM203</code></td><td>HM203：管理员授权不可用或已取消。普通检测继续运行。重新启动管理员模式即可重试。</td></tr>
+<tr><td><code>HM204</code></td><td>附加硬件查询失败，基本信息仍可用。请检查工具、权限和兼容性，然后刷新。</td></tr>
+<tr><td><code>HM301</code></td><td>HM301：无法保存 CSV。请检查目标位置和写入权限。</td></tr>
+<tr><td><code>HM302</code></td><td>HM302：无法打印。请检查打印机及 python3-cairo / python3-gi-cairo 软件包。</td></tr>
+<tr><td><code>HM401</code></td><td>缺少 {tool}。Linux Mint 通过 {package} 软件包提供这些字段。安装命令：sudo apt install {package}</td></tr>
+<tr><td><code>HM402</code></td><td>PCI 设备 {device} 未绑定驱动。可能缺少或未加载匹配模块，也可能是设备被禁用或保留。这不一定表示缺少软件包。请检查设备 ID 和驱动支持。 USB 接口 {device} 未绑定驱动。部分厂商接口或用户空间接口无需内核驱动。安装前请先检查设备及接口用途。</td></tr>
+<tr><td><code>HM403</code></td><td>更多字段需要管理员读取权限。请以管理员模式启动 pcMonitor；安装软件包不会授予这些权限。</td></tr>
+<tr><td><code>HM404</code></td><td>固件或设备标识缺失或为占位值。安装软件不能补充设备本身未报告的标识。 此虚拟机未提供可读取的温度传感器。客户机管理员权限不能创建传感器；请先检查虚拟机管理程序是否提供传感器。</td></tr>
+<tr><td><code>HM405</code></td><td>smartctl 已安装，但没有可用的 SMART 健康数据。可能原因包括待机、超时、控制器支持或访问失败。请检查下方 SMART 消息；尚不能判断缺少软件包。 无法获取 {tool} 的附加数据。可能原因：查询失败、超时或权限不足。请刷新并检查工具。</td></tr>
+<tr><td><code>HM501</code></td><td>HM501：语言文件无效或无法读取。请选择含文本值和 language.name 的 UTF-8 &lt;language-code&gt;.json（最大 2 MiB）。英语文件必须保留全部已有键。</td></tr>
+<tr><td><code>HM502</code></td><td>HM502：语言服务器或 manifest.json 不可用或无效。请检查 HTTPS 地址、网络连接及清单格式。不允许重定向。本地语言仍然可用。</td></tr>
+<tr><td><code>HM503</code></td><td>HM503：SHA256 校验和不匹配。文件未安装。请联系提供者获取修正后的文件。</td></tr>
+<tr><td><code>HM504</code></td><td>HM504：无法保存语言和帮助包。请检查 languages/ 与 help/ 的写入权限和剩余空间。程序会回滚替换；若回滚失败，请保留 .pack-backup 文件。</td></tr>
+<tr><td><code>HM505</code></td><td>HM505：对应 HTML 帮助缺失、无法读取或包含不允许的内容。请将 &lt;language-code&gt;.html 放在 JSON 旁边或相邻的 help/ 文件夹中。仅允许无脚本、无外部嵌入内容的静态 HTML。未安装任何文件。</td></tr>
+</tbody></table>
+<h2>发行与许可证</h2>
+<p>作者：Josef Lehner。采用 GPL-3.0-only，完整文本见 LICENSE。源代码和可安装版本位于 GitHub 发行页面。解压后，使用下列命令安装到空文件夹。现有安装不会被覆盖。编译版需要 Python 3.12 和 GTK/PyGObject，并非独立的原生可执行程序。</p>
+<pre>python3 install.py --directory /absolute/path/pcMonitor</pre>
+<p><a href="https://github.com/Franz-Dariwudel/pcMonitor/releases">GitHub</a> · <a href="https://dogtruck.eu">dogtruck.eu</a></p></body></html>

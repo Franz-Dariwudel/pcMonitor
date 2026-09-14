@@ -1,0 +1,76 @@
+<!doctype html><html lang="pt" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guia do pcMonitor</title>
+<style>body{font:1rem/1.7 system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1.5rem}h1,h2{line-height:1.35}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:.7rem;text-align:start;vertical-align:top}code,pre{direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}pre{white-space:pre-wrap}a{overflow-wrap:anywhere}</style></head><body>
+<h1>Guia do pcMonitor</h1><p>pcMonitor 1.6.0 · Português · Josef Lehner</p>
+<h2>Requisitos e arranque</h2>
+<p>O pcMonitor 1.6.0 funciona no Linux Mint com Python 3.10 ou posterior, PyGObject e GTK 4.8 ou posterior. Instale python3, python3-gi e gir1.2-gtk-4.0. A impressão requer python3-cairo e python3-gi-cairo. A edição compilada exige Python 3.12. O programa lê informações; não instala controladores nem altera o hardware.</p>
+<p>Na pasta do programa, use os comandos abaixo. --version mostra a versão; --check verifica os recursos; --scan apresenta uma captura JSON e termina. --admin pede autorização através de pkexec para o leitor; a interface mantém-se na sessão normal. --help descreve as opções. O resultado correto devolve 0; uma verificação ou autorização solicitada falhada devolve 1. A captura pode conter números de série e endereços de rede.</p>
+<pre>python3 -m monitor
+python3 -m monitor --help
+python3 -m monitor --version
+python3 -m monitor --check
+python3 -m monitor --scan
+python3 -m monitor --admin</pre>
+<h2>Utilização</h2>
+<p>Selecione uma categoria à esquerda ou no menu Hardware. À direita aparecem os dispositivos e detalhes. A pesquisa filtra os resultados. O filtro de portas vazias muda apenas a apresentação: não desliga nem apaga dispositivos. Zero é um valor válido; estados desconhecidos e erros continuam visíveis. O botão de visão geral regressa ao resumo.</p>
+<p>Em Editar → Definições, escolha o idioma e um intervalo de 2, 3, 5 ou 10 segundos. A opção desativada faz uma leitura inicial e depois só atualiza pelo botão Atualizar. Uma consulta já iniciada pode terminar. Ficheiro → Sair fecha ordenadamente. Ajuda disponibiliza a documentação do idioma escolhido, a versão, o autor e os componentes usados.</p>
+<h2>Definições, idiomas e ajuda</h2>
+<p>As definições ficam em config/settings.json e os erros com data e contexto em logs/. O tema do sistema é respeitado. Os catálogos languages/&lt;code&gt;.json são objetos JSON UTF-8 com chaves e valores de texto e language.name. São redetetados ao abrir as definições. Um único idioma válido é escolhido automaticamente; com vários, mantém-se a seleção válida ou usa-se alemão. As chaves em falta recorrem ao inglês.</p>
+<p>A ajuda é procurada independentemente em help/&lt;code&gt;.html e abre apenas no idioma escolhido, sem mudar para inglês se faltar. O servidor predefinido é https://github.com/Franz-Dariwudel/pcMonitor. Procure idiomas disponíveis e instale o idioma e a ajuda em conjunto. A instalação é guardada imediatamente, mesmo que cancele depois o diálogo; escolha o idioma e guarde para mudar a interface.</p>
+<p>Também pode selecionar um JSON local com o HTML ao lado, ou usar pastas vizinhas languages/ e help/. Cada transferência admite até 2 MiB, usa HTTPS sem redirecionamentos e verifica SHA256 e conteúdo. Só é aceite HTML passivo sem scripts, formulários ou conteúdos externos incorporados. Ambos os ficheiros são validados antes da substituição. Erros de escrita originam reversão; uma falha elétrica entre as duas substituições não fica totalmente coberta. Conserve .pack-backup se a reversão falhar. A soma do mesmo servidor não substitui uma assinatura independente. As atualizações são manuais e o programa funciona sem Internet.</p>
+<h2>Dados e limites</h2>
+<p>As categorias incluem CPU, RAM e módulos, placa principal, BIOS/UEFI, GPU, armazenamento, rede, USB, ecrãs, PCIe, sensores e números de série. lscpu e lspci ampliam os dados; dmidecode e smartctl podem exigir permissões de administrador. Ferramentas opcionais: pciutils, dmidecode, smartmontools, pulseaudio-utils, ethtool, iw, nvme-cli e mokutil. Instale apenas o que os diagnósticos indicarem para o equipamento.</p>
+<p>A RAM disponível inclui caches recuperáveis; VRAM refere-se apenas a memória dedicada. O modo EDID preferido não é a resolução atual. A percentagem da ventoinha não equivale a RPM. Canais de tensão sem identificação não são adivinhados como linhas de 12/5/3,3 V. As consultas externas têm limites de tempo; alguns dados estáticos ficam em cache até cinco minutos. SMART não inicia testes e evita acordar unidades em espera quando suportado. Numa VM, podem faltar informações do anfitrião.</p>
+<ul>
+<li>Porta lógica do concentrador. Inclui portas internas; USB 2 e USB 3 podem representar a mesma tomada física.</li>
+<li>O controlador indica o estado do conector e os modos suportados. Um ecrã ligado pode estar desativado.</li>
+<li>Ligado significa sinal de ligação, não acesso à Internet. Numa interface desativada administrativamente, a presença do cabo pode ser desconhecida.</li>
+<li>A deteção de tomadas requer suporte do controlador e do servidor de áudio. «Desconhecido» não significa vazio.</li>
+<li>Porta SATA indicada pelo núcleo. Uma unidade está ligada mesmo que o sistema de ficheiros não esteja montado.</li>
+<li>Unidade detetada. Isto não permite identificar outras ranhuras físicas vazias.</li>
+<li>Ranhura indicada pelo firmware ou núcleo. Numa máquina virtual pode ser virtual.</li>
+<li>Requer suporte do controlador Type-C. Os dispositivos USB também podem aparecer em USB.</li>
+<li>Dispositivo Thunderbolt detetado; a autorização é apresentada separadamente.</li>
+<li>As portas série frequentemente não detetam dispositivos ligados por um cabo simples. Um adaptador USB é detetado como ligado.</li>
+<li>Módulos instalados indicados pelo firmware. Podem faltar campos; frequências e taxas de transferência mantêm as unidades indicadas.</li>
+<li>Os campos do firmware podem faltar ou conter valores provisórios. Os números de série normalmente requerem acesso de administrador.</li>
+<li>A VRAM só aparece quando o controlador indica memória de vídeo dedicada. A RAM partilhada não é apresentada como VRAM.</li>
+<li>SMART é lido com smartmontools no modo de administrador e guardado em cache até 60 segundos. Não são iniciados autotestes.</li>
+</ul>
+<h2>Impressão e CSV</h2>
+<p>Acima do painel direito, escolha Categoria selecionada ou Todos os dados do hardware e prima Imprimir ou Guardar CSV. É usada uma captura no momento do clique, incluindo dispositivos ocultos por filtros e avisos. O CSV usa UTF-8 com BOM e ponto e vírgula; possíveis fórmulas são neutralizadas como texto. Imprimir abre o diálogo do sistema; Cancelar não envia trabalhos.</p>
+<h2>Erros e recuperação</h2>
+<p>Não confunda erros com portas vazias. As funções não afetadas continuam sempre que possível. Consulte o código, o ficheiro envolvido e logs/. Faça cópias de segurança antes de reparar dados.</p>
+<table><thead><tr><th>Erro de leitura</th><th>Nota</th></tr></thead><tbody>
+<tr><td><code>HM001</code></td><td>Falta Python 3; o programa não inicia. Instale python3.</td></tr>
+<tr><td><code>HM002</code></td><td>Falta PyGObject ou GTK 4; a janela não abre. Instale python3-gi e gir1.2-gtk-4.0.</td></tr>
+<tr><td><code>HM003</code></td><td>Um ficheiro do programa falta ou está ilegível. O arranque é interrompido; restaure o pacote completo.</td></tr>
+<tr><td><code>HM101</code></td><td>Não é possível escrever em logs/. O registo usa a saída de erro. Verifique permissões e espaço livre.</td></tr>
+<tr><td><code>HM102</code></td><td>config/settings.json é inválido ou ilegível. São usados valores predefinidos. Faça uma cópia e repare o JSON.</td></tr>
+<tr><td><code>HM103</code></td><td>Um catálogo de idioma falta ou é inválido. O ficheiro é ignorado; verifique UTF-8, o objeto JSON e os valores de texto, e reabra as definições.</td></tr>
+<tr><td><code>HM104</code></td><td>HM104: Não foi possível guardar as definições. Verifique as permissões de escrita em config.</td></tr>
+<tr><td><code>HM105</code></td><td>HM105: A ajuda no idioma selecionado não está disponível. Restaure help/&lt;language&gt;.html e verifique o navegador predefinido.</td></tr>
+<tr><td><code>HM106</code></td><td>Falta um ícone do programa ou de uma porta. Restaure o ficheiro em resources/. Os dados do dispositivo não mudam.</td></tr>
+<tr><td><code>HM199</code></td><td>Erro inesperado do programa, que pode impedir a operação. Conserve o registo, anote o ocorrido e reinicie o pcMonitor.</td></tr>
+<tr><td><code>HM200</code></td><td>Não foi possível ler uma categoria. As restantes continuam; o erro é apresentado. Verifique controladores e registos.</td></tr>
+<tr><td><code>HM201</code></td><td>Sem permissão de leitura para sysfs / procfs. Use o modo de administrador para ler este campo. Nova tentativa ao atualizar manualmente ou reiniciar.</td></tr>
+<tr><td><code>HM202</code></td><td>Existe hardware de áudio, mas pactl ou o servidor de áudio está indisponível. Execute sem sudo na sessão gráfica do utilizador.</td></tr>
+<tr><td><code>HM203</code></td><td>HM203: Autorização de administrador indisponível ou cancelada. A deteção normal permanece ativa. Reinicie o modo de administrador para tentar novamente.</td></tr>
+<tr><td><code>HM204</code></td><td>Falhou uma consulta adicional de hardware. Os dados básicos continuam disponíveis. Verifique ferramenta, permissões e compatibilidade; atualize novamente.</td></tr>
+<tr><td><code>HM301</code></td><td>HM301: Não foi possível guardar o CSV. Verifique o destino e as permissões de escrita.</td></tr>
+<tr><td><code>HM302</code></td><td>HM302: Impressão indisponível. Verifique a impressora e os pacotes python3-cairo / python3-gi-cairo.</td></tr>
+<tr><td><code>HM401</code></td><td>Falta {tool}. O Linux Mint fornece estes campos através do pacote {package}. Instale com: sudo apt install {package}</td></tr>
+<tr><td><code>HM402</code></td><td>Não há controlador associado ao dispositivo PCI {device}. Pode faltar um módulo ou este não estar carregado; o dispositivo também pode estar desativado ou reservado. Não significa automaticamente falta de um pacote. Verifique o ID e a compatibilidade. Não há controlador associado à interface USB {device}. Algumas interfaces de fabricante ou de espaço de utilizador não precisam de controlador do núcleo. Verifique a função antes de instalar algo.</td></tr>
+<tr><td><code>HM403</code></td><td>Os campos adicionais requerem acesso de leitura de administrador. Inicie o pcMonitor no modo de administrador; instalar um pacote não concede essas permissões.</td></tr>
+<tr><td><code>HM404</code></td><td>Um identificador do firmware/dispositivo falta ou é provisório. Instalar software não cria identificadores que o dispositivo não fornece. A VM não expõe sensores de temperatura legíveis. Os direitos de administrador do convidado não criam sensores; verifique primeiro o hipervisor.</td></tr>
+<tr><td><code>HM405</code></td><td>smartctl está instalado, mas não há dados de saúde SMART úteis. Possíveis causas: espera, tempo esgotado, suporte do controlador ou falha de acesso. Verifique as mensagens SMART; não foi comprovada a falta de um pacote. Os dados adicionais de {tool} estão indisponíveis. Possíveis causas: falha na consulta, tempo esgotado ou falta de permissões. Atualize e verifique a ferramenta.</td></tr>
+<tr><td><code>HM501</code></td><td>HM501: Ficheiro de idioma inválido ou ilegível. Selecione &lt;language-code&gt;.json em UTF-8 com valores de texto e language.name (máximo 2 MiB). O inglês deve manter todas as chaves existentes.</td></tr>
+<tr><td><code>HM502</code></td><td>HM502: Servidor de idiomas ou manifest.json indisponível ou inválido. Verifique HTTPS, ligação e formato do manifesto. Não são permitidos redirecionamentos. Os idiomas locais continuam disponíveis.</td></tr>
+<tr><td><code>HM503</code></td><td>HM503: Soma SHA256 incorreta. O ficheiro não foi instalado. Peça uma versão corrigida ao fornecedor.</td></tr>
+<tr><td><code>HM504</code></td><td>HM504: Não foi possível guardar o pacote. Verifique permissões e espaço em languages/ e help/. A substituição é revertida; conserve os ficheiros .pack-backup se a reversão falhar.</td></tr>
+<tr><td><code>HM505</code></td><td>HM505: Ajuda HTML correspondente em falta, ilegível ou com conteúdo não permitido. Coloque &lt;language-code&gt;.html ao lado do JSON ou em help/ adjacente. Só é permitido HTML passivo sem scripts nem conteúdos externos incorporados. Nada foi instalado.</td></tr>
+</tbody></table>
+<h2>Distribuição e licença</h2>
+<p>Autor: Josef Lehner. GPL-3.0-only; texto completo em LICENSE. O código fonte e a edição instalável estão nas versões GitHub. Depois de extrair, instale numa pasta vazia com o comando seguinte. Instalações existentes não são substituídas. A edição compilada precisa de Python 3.12 e GTK/PyGObject; não é um executável nativo autónomo.</p>
+<pre>python3 install.py --directory /absolute/path/pcMonitor</pre>
+<p><a href="https://github.com/Franz-Dariwudel/pcMonitor/releases">GitHub</a> · <a href="https://dogtruck.eu">dogtruck.eu</a></p></body></html>

@@ -1,0 +1,76 @@
+<!doctype html><html lang="tr" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pcMonitor kullanım kılavuzu</title>
+<style>body{font:1rem/1.7 system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1.5rem}h1,h2{line-height:1.35}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:.7rem;text-align:start;vertical-align:top}code,pre{direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}pre{white-space:pre-wrap}a{overflow-wrap:anywhere}</style></head><body>
+<h1>pcMonitor kullanım kılavuzu</h1><p>pcMonitor 1.6.0 · Türkçe · Josef Lehner</p>
+<h2>Gereksinimler ve başlatma</h2>
+<p>pcMonitor 1.6.0; Linux Mint, Python 3.10 veya üstü, PyGObject ve GTK 4.8 veya üstü gerektirir. python3, python3-gi ve gir1.2-gtk-4.0 kurun. Yazdırma için python3-cairo ve python3-gi-cairo gerekir. Derlenmiş sürüm Python 3.12 gerektirir. Program yalnızca bilgi okur; sürücü kurmaz veya donanımı değiştirmez.</p>
+<p>Program klasöründe aşağıdaki komutları kullanın. --version sürümü gösterir; --check kaynakları denetler; --scan JSON anlık görüntüsü üretip çıkar. --admin okuyucu için pkexec üzerinden izin ister; arayüz normal kullanıcı oturumunda kalır. --help seçenekleri açıklar. Başarı durumunda çıkış kodu 0, denetim veya istenen yetki başarısızsa 1’dir. Anlık görüntü seri numaraları ve ağ adresleri içerebilir.</p>
+<pre>python3 -m monitor
+python3 -m monitor --help
+python3 -m monitor --version
+python3 -m monitor --check
+python3 -m monitor --scan
+python3 -m monitor --admin</pre>
+<h2>Kullanım</h2>
+<p>Soldan veya Donanım menüsünden kategori seçin. Sağda aygıtlar ve ayrıntıları gösterilir. Arama sonuçları süzer. Boş bağlantı filtresi yalnızca görünümü değiştirir: aygıtları kapatmaz veya silmez. Sıfır geçerli bir değerdir; bilinmeyen durumlar ve hatalar görünür kalır. Genel bakış düğmesi özete döner.</p>
+<p>Düzenle → Ayarlar bölümünde dili ve 2, 3, 5 veya 10 saniyelik yenileme aralığını seçin. Kapalı seçeneğinde bir ilk okuma yapılır, sonra yalnızca Yenile düğmesiyle okunur. Başlamış bir sorgu tamamlanabilir. Dosya → Çıkış programı düzenli kapatır. Yardım menüsünde seçilen dilin kılavuzu, sürüm, yazar ve kullanılan bileşenler bulunur.</p>
+<h2>Ayarlar, diller ve yardım</h2>
+<p>Ayarlar config/settings.json içine, tarih ve bağlam içeren hatalar logs/ içine yazılır. Sistem teması korunur. languages/&lt;code&gt;.json katalogları, metin anahtarları ve değerleri ile language.name içeren UTF-8 JSON nesneleridir. Ayarlar açıldığında yeniden algılanır. Tek geçerli dil otomatik seçilir; birden fazla dilde geçerli seçim korunur veya Almanca kullanılır. Eksik anahtarlarda İngilizceye dönülür.</p>
+<p>Yardım, help/&lt;code&gt;.html altında bağımsız aranır ve yalnızca seçilen dilde açılır; yoksa İngilizceye geçmez. Varsayılan sunucu https://github.com/Franz-Dariwudel/pcMonitor adresidir. Kullanılabilir dilleri bulun, ardından dil ve yardımı birlikte kurun. Kurulum, iletişim kutusu sonra iptal edilse bile hemen kaydedilir; arayüzü değiştirmek için dili seçip kaydedin.</p>
+<p>Yerel JSON ile yanında bulunan HTML’yi veya bitişik languages/ ve help/ klasörlerini de kullanabilirsiniz. Her indirme en fazla 2 MiB’dir; yönlendirmesiz HTTPS, SHA256 ve içerik denetimi kullanılır. Betik, form veya dış gömülü içerik içermeyen pasif HTML kabul edilir. Değiştirmeden önce iki dosya da doğrulanır. Yazma hataları geri alma başlatır; iki değiştirme arasındaki elektrik kesintisi tamamen atomik olarak kapsanamaz. Geri alma başarısızsa .pack-backup dosyalarını saklayın. Aynı sunucudaki sağlama toplamı bağımsız imza yerine geçmez. Güncellemeler elle yapılır; program çevrimdışı çalışır.</p>
+<h2>Veriler ve sınırlar</h2>
+<p>Kategoriler CPU, RAM ve modüller, anakart, BIOS/UEFI, GPU, depolama, ağ, USB, ekran, PCIe, sensör ve seri numaralarını içerir. lscpu ve lspci verileri genişletir; dmidecode ve smartctl yönetici izni isteyebilir. İsteğe bağlı araçlar: pciutils, dmidecode, smartmontools, pulseaudio-utils, ethtool, iw, nvme-cli ve mokutil. Yalnızca donanımınızın tanılamasında belirtilenleri kurun.</p>
+<p>Kullanılabilir RAM geri kazanılabilir önbelleği içerir; VRAM yalnızca ayrılmış bellektir. Tercih edilen EDID modu geçerli çözünürlük değildir. Fan yüzdesi RPM değildir. Etiketsiz gerilim kanalları 12/5/3,3 V hattı diye tahmin edilmez. Dış sorguların süre sınırı vardır; bazı sabit veriler beş dakikaya kadar önbelleğe alınır. SMART sınama başlatmaz ve desteklenen bekleyen diskleri uyandırmaktan kaçınır. VM ana makine verilerini göstermeyebilir.</p>
+<ul>
+<li>Mantıksal hub bağlantısı. Dahili bağlantıları içerir; USB 2 ve USB 3 aynı fiziksel soketi temsil edebilir.</li>
+<li>Sürücü, bağlantı durumunu ve desteklenen modları bildirir. Bağlı bir ekran devre dışı olabilir.</li>
+<li>Bağlı, bağlantı sinyali demektir; İnternet erişimi değildir. Yönetimsel olarak kapatılmış arayüz kablo varlığını bildirmeyebilir.</li>
+<li>Jak algılama, sürücü ve ses sunucusu desteği gerektirir. «Bilinmiyor» boş demek değildir.</li>
+<li>Çekirdeğin bildirdiği SATA bağlantısı. Dosya sistemi bağlanmamış olsa bile disk bağlıdır.</li>
+<li>Disk algılandı. Bu, diğer boş fiziksel yuvaların bilindiği anlamına gelmez.</li>
+<li>Ürün yazılımı veya çekirdeğin bildirdiği yuva. Sanal makinede sanal bir yuva olabilir.</li>
+<li>Type-C sürücü desteği gerektirir. USB aygıtları USB altında da görünebilir.</li>
+<li>Thunderbolt aygıtı algılandı; yetkilendirme ayrı gösterilir.</li>
+<li>Seri bağlantılar basit bir kablodaki aygıtı çoğunlukla algılayamaz. USB adaptörü bağlı olarak algılanır.</li>
+<li>Ürün yazılımının bildirdiği takılı bellek modülleri. Alanlar eksik olabilir; saat ve aktarım hızları bildirilen birimlerle gösterilir.</li>
+<li>Ürün yazılımı alanları eksik veya yer tutucu olabilir. Seri numaraları genellikle yönetici erişimi gerektirir.</li>
+<li>VRAM yalnızca sürücü ayrılmış görüntü belleği bildirirse gösterilir. Paylaşılan RAM, VRAM olarak gösterilmez.</li>
+<li>SMART, yönetici modunda smartmontools ile okunur ve 60 saniyeye kadar önbelleğe alınır. Öz sınamalar başlatılmaz.</li>
+</ul>
+<h2>Yazdırma ve CSV</h2>
+<p>Sağ panelin üzerinde Seçilen kategori veya Tüm donanım verileri seçip Yazdır ya da CSV kaydet düğmesine basın. Tıklama anındaki görüntü kullanılır; filtrelenen aygıtlar ve notlar da dahildir. CSV, BOM içeren UTF-8 ve noktalı virgül kullanır; olası formüller metne dönüştürülür. Yazdır sistem iletişim kutusunu açar; İptal yazdırma işi göndermez.</p>
+<h2>Hatalar ve kurtarma</h2>
+<p>Hataları boş bağlantılarla karıştırmayın. Etkilenmeyen işlevler mümkün olduğunca sürer. Hata kodunu, ilgili dosyayı ve logs/ kayıtlarını inceleyin. Verileri onarmadan önce yedekleyin.</p>
+<table><thead><tr><th>Okuma hatası</th><th>Not</th></tr></thead><tbody>
+<tr><td><code>HM001</code></td><td>Python 3 eksik; program başlamaz. python3 kurun.</td></tr>
+<tr><td><code>HM002</code></td><td>PyGObject veya GTK 4 eksik; pencere açılamaz. python3-gi ve gir1.2-gtk-4.0 kurun.</td></tr>
+<tr><td><code>HM003</code></td><td>Program dosyası eksik veya okunamıyor. Başlatma durdurulur; tam paketi geri yükleyin.</td></tr>
+<tr><td><code>HM101</code></td><td>logs/ içine yazılamıyor. Günlük standart hata çıktısını kullanır. İzinleri ve boş alanı denetleyin.</td></tr>
+<tr><td><code>HM102</code></td><td>config/settings.json geçersiz veya okunamıyor. Varsayılanlar kullanılır. Dosyayı yedekleyip JSON’u düzeltin.</td></tr>
+<tr><td><code>HM103</code></td><td>Dil kataloğu eksik veya geçersiz. Dosya atlanır; UTF-8, JSON nesnesi ve metin değerlerini denetleyip Ayarlar’ı yeniden açın.</td></tr>
+<tr><td><code>HM104</code></td><td>HM104: Ayarlar kaydedilemedi. config için yazma iznini denetleyin.</td></tr>
+<tr><td><code>HM105</code></td><td>HM105: Seçilen dilde yardım kullanılamıyor. help/&lt;language&gt;.html dosyasını geri yükleyin ve varsayılan tarayıcıyı denetleyin.</td></tr>
+<tr><td><code>HM106</code></td><td>Program veya bağlantı simgesi eksik. resources/ içindeki dosyayı geri yükleyin. Aygıt verileri değişmez.</td></tr>
+<tr><td><code>HM199</code></td><td>Beklenmeyen program hatası işlemi engelleyebilir. Günlüğü saklayın, olanları not edin ve pcMonitor’ü yeniden başlatın.</td></tr>
+<tr><td><code>HM200</code></td><td>Bir kategori okunamadı. Diğerleri devam eder; hata gösterilir. Sürücüleri ve günlükleri denetleyin.</td></tr>
+<tr><td><code>HM201</code></td><td>sysfs / procfs için okuma izni yok. Alanı okumak için yönetici modunu başlatın. Elle yenilemede veya yeniden başlatmada tekrar denenir.</td></tr>
+<tr><td><code>HM202</code></td><td>Ses donanımı var, ancak pactl veya ses sunucusu kullanılamıyor. Oturum açmış kullanıcının grafik oturumunda sudo olmadan çalıştırın.</td></tr>
+<tr><td><code>HM203</code></td><td>HM203: Yönetici yetkisi kullanılamıyor veya iptal edildi. Normal algılama sürer. Yeniden denemek için yönetici modunu yeniden başlatın.</td></tr>
+<tr><td><code>HM204</code></td><td>Ek donanım sorgusu başarısız. Temel bilgiler kullanılabilir kalır. Aracı, izinleri ve uyumluluğu denetleyip yenileyin.</td></tr>
+<tr><td><code>HM301</code></td><td>HM301: CSV kaydedilemedi. Hedefi ve yazma izinlerini denetleyin.</td></tr>
+<tr><td><code>HM302</code></td><td>HM302: Yazdırma kullanılamıyor. Yazıcıyı ve python3-cairo / python3-gi-cairo paketlerini denetleyin.</td></tr>
+<tr><td><code>HM401</code></td><td>{tool} eksik. Linux Mint bu alanları {package} paketiyle sağlar. Kurulum: sudo apt install {package}</td></tr>
+<tr><td><code>HM402</code></td><td>PCI aygıtı {device} için bağlı sürücü yok. Uygun modül eksik veya yüklenmemiş olabilir; aygıt kapalı veya ayrılmış da olabilir. Bu otomatik olarak eksik paket demek değildir. Aygıt kimliğini ve sürücü desteğini denetleyin. USB arayüzü {device} için bağlı sürücü yok. Bazı üretici veya kullanıcı alanı arayüzleri çekirdek sürücüsü gerektirmez. Kurulumdan önce işlevi denetleyin.</td></tr>
+<tr><td><code>HM403</code></td><td>Ek alanlar yönetici okuma erişimi gerektirir. pcMonitor’ü yönetici modunda başlatın; paket kurmak bu izinleri vermez.</td></tr>
+<tr><td><code>HM404</code></td><td>Ürün yazılımı/aygıt kimliği eksik veya yer tutucu. Yazılım kurmak, aygıtın bildirmediği kimlikleri oluşturamaz. VM okunabilir sıcaklık sensörü sunmuyor. Konuk yönetici hakları sensör oluşturamaz; önce hipervizörü denetleyin.</td></tr>
+<tr><td><code>HM405</code></td><td>smartctl kurulu, ancak kullanılabilir SMART sağlık verisi yok. Bekleme, zaman aşımı, denetleyici desteği veya erişim hatası olabilir. SMART iletilerini denetleyin; eksik paket olduğu belirlenmedi. {tool} tarafından sağlanan ek veriler kullanılamıyor. Sorgu hatası, zaman aşımı veya eksik izin olabilir. Yenileyin ve aracı denetleyin.</td></tr>
+<tr><td><code>HM501</code></td><td>HM501: Dil dosyası geçersiz veya okunamıyor. Metin değerleri ve language.name içeren UTF-8 &lt;language-code&gt;.json seçin (en fazla 2 MiB). İngilizce mevcut tüm anahtarları korumalıdır.</td></tr>
+<tr><td><code>HM502</code></td><td>HM502: Dil sunucusu veya manifest.json kullanılamıyor ya da geçersiz. HTTPS adresini, bağlantıyı ve bildirim biçimini denetleyin. Yönlendirmeye izin verilmez. Yerel diller kullanılabilir kalır.</td></tr>
+<tr><td><code>HM503</code></td><td>HM503: SHA256 sağlama toplamı eşleşmiyor. Dosya kurulmadı. Sağlayıcıdan düzeltilmiş dosya isteyin.</td></tr>
+<tr><td><code>HM504</code></td><td>HM504: Dil ve yardım paketi kaydedilemedi. languages/ ve help/ yazma izinlerini ve boş alanı denetleyin. Değişiklik geri alınır; geri alma başarısızsa .pack-backup dosyalarını saklayın.</td></tr>
+<tr><td><code>HM505</code></td><td>HM505: Eşleşen HTML yardımı eksik, okunamıyor veya izin verilmeyen içerik barındırıyor. &lt;language-code&gt;.html dosyasını JSON’un yanına ya da bitişik help/ klasörüne koyun. Betik veya harici gömülü içerik içermeyen pasif HTML gerekir. Hiçbir şey kurulmadı.</td></tr>
+</tbody></table>
+<h2>Dağıtım ve lisans</h2>
+<p>Yazar: Josef Lehner. GPL-3.0-only; tam metin LICENSE içindedir. Kaynak kod ve kurulabilir sürüm GitHub yayınlarında bulunur. Paketi açtıktan sonra aşağıdaki komutla boş bir klasöre kurun. Mevcut kurulumların üzerine yazılmaz. Derlenmiş sürüm Python 3.12 ve GTK/PyGObject gerektirir; bağımsız yerel çalıştırılabilir dosya değildir.</p>
+<pre>python3 install.py --directory /absolute/path/pcMonitor</pre>
+<p><a href="https://github.com/Franz-Dariwudel/pcMonitor/releases">GitHub</a> · <a href="https://dogtruck.eu">dogtruck.eu</a></p></body></html>
