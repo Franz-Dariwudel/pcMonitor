@@ -1,3 +1,10 @@
+# 1.6.1
+
+- Feste GitHub-Quelle ohne Adressfeld in den Einstellungen.
+- Frischer Katalog bei jeder Suche; Dateien werden über ihre SHA256-Kennung angefordert.
+- Sprache und HTML-Hilfe zuerst in download/ speichern, erneut prüfen und von dort installieren.
+- Downloads bleiben zur späteren lokalen Installation erhalten; neue Beschriftungen in allen zehn Sprachen.
+
 # Sprachpakete 2026-09-14 (kompatibel mit 1.6.0)
 
 - Spanisch, Französisch, Portugiesisch, Chinesisch (vereinfacht), Hindi, Arabisch, Russisch und Türkisch: jeweils 293 Texte und HTML-Hilfe mit vollständiger Fehlerübersicht.

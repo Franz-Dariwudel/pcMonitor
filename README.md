@@ -1,4 +1,4 @@
-# pcMonitor 1.6.0
+# pcMonitor 1.6.1
 
 Lokaler pcMonitor für Linux Mint mit GTK 4. Links stehen von Linux erkannte Anschlüsse mit farbigen, nach Anschlussart gestalteten Symbolen; rechts erscheinen Systemübersicht oder Details zur Auswahl. Deutsch und Englisch sind standardmäßig enthalten. Spanisch, Französisch, Portugiesisch, Chinesisch (vereinfacht), Hindi, Arabisch, Russisch und Türkisch lassen sich mit passender HTML-Hilfe installieren.
 
@@ -112,7 +112,9 @@ Formatreferenzen: https://docs.nvidia.com/deploy/nvidia-smi/ und https://docs.ke
 
 Unter Bearbeiten → Einstellungen lassen sich Sprachdatei und passende HTML-Hilfe gemeinsam installieren. Lokal die `<code>.json` auswählen; `<code>.html` muss daneben liegen oder als `help/<code>.html` neben dem Ordner `languages/` vorliegen. Beide Dateien werden sofort installiert. Danach die Sprache auswählen und speichern. Die Installation bleibt auch bei Abbrechen des Einstellungsdialogs erhalten.
 
-Der Sprachserver ist auf [https://github.com/Franz-Dariwudel/pcMonitor](https://github.com/Franz-Dariwudel/pcMonitor) voreingestellt. Bei Bedarf einen anderen Repositorylink eintragen; ohne Branchangabe wird `main` verwendet. Andere Branches über einen `/tree/BRANCH`-Link oder die Raw-Adresse angeben. „Verfügbare Sprachen suchen“ liest `manifest.json`, „Installieren / aktualisieren“ prüft und installiert beide Dateien. Keine automatischen Hintergrundupdates und keine Internetpflicht.
+Die feste Sprachquelle ist [Franz-Dariwudel/pcMonitor](https://github.com/Franz-Dariwudel/pcMonitor). Es gibt kein Adressfeld mehr. „Verfügbare Sprachen suchen“ fordert bei jedem Klick einen frischen Katalog an; dadurch bleibt keine veraltete Liste mit nur zwei Sprachen im Cache. Dateien werden mit ihrer SHA256-Kennung abgerufen.
+
+Sprache und passende HTML-Hilfe werden zuerst unter `download/languages/<code>.json` und `download/help/<code>.html` im Programmordner gespeichert. Erst nach Prüfung beider Downloads wird das gespeicherte Paar erneut gelesen, anhand seiner Prüfsummen kontrolliert und nach `languages/` beziehungsweise `help/` installiert. Die Dateien in `download/` bleiben erhalten. Die lokale Dateiauswahl startet dort, wenn der Ordner bereits vorhanden ist. Schreibfehler in diesem Ordner werden als HM504 gemeldet; die aktive Installation bleibt unverändert.
 
 `python3 build.py` erstellt zusätzlich `dist/pcMonitor-sprachpakete/` mit einem uploadfertigen `manifest.json`, `languages/` und `help/` für alle vorhandenen Sprach-/Hilfepaare. Diese drei Elemente in den Stammordner des öffentlichen GitHub-Repositorys hochladen. Keine Konfigurationen, Logs oder Caches hochladen. Das Programm führt keine GitHub-Anmeldung durch; private Repositorys werden nicht unterstützt. Das öffentliche Repository ist https://github.com/Franz-Dariwudel/pcMonitor.
 
@@ -138,4 +140,4 @@ Der technische Python-Modulname `monitor` bleibt für bestehende Startaufrufe ko
 
 ## Sprachpakete vom 14. September 2026
 
-Acht zusätzliche vollständige Kataloge mit je 293 Texten und übersetzter HTML-Hilfe. Die arabische Hilfe verwendet Rechts-nach-links-Leserichtung. Fachbegriffe, Dateipfade und Platzhalter bleiben technisch kompatibel. Verfügbare Sprachen über Einstellungen → Verfügbare Sprachen suchen laden; jede Installation enthält immer Sprache und Hilfe. Programmversion 1.6.0 bleibt kompatibel; es ist kein Programmupdate für die neuen Sprachen erforderlich.
+Acht zusätzliche vollständige Kataloge mit vollständigen Anwendungstexten und übersetzter HTML-Hilfe. Die arabische Hilfe verwendet Rechts-nach-links-Leserichtung. Fachbegriffe, Dateipfade und Platzhalter bleiben technisch kompatibel. Verfügbare Sprachen über Einstellungen → Verfügbare Sprachen suchen laden; jede Installation enthält immer Sprache und Hilfe. Programmversion 1.6.0 bleibt kompatibel; es ist kein Programmupdate für die neuen Sprachen erforderlich.
