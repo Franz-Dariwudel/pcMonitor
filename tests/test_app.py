@@ -166,3 +166,48 @@ class UiTests(unittest.TestCase):
         self.window._closing()
         dialog.destroy.assert_called_once()
         self.assertIsNone(self.window._csv_chooser)
+
+    def test_missing_details_are_red_but_zero_and_false_are_valid(self):
+        from monitor.app import clear
+        for value,missing in ((None,True),('',True),('value.unavailable',True),(0,False),(False,False),('available',False)):
+            clear(self.window.right)
+            self.window.detail_row('model',value)
+            widget=self.window.right.get_first_child().get_last_child()
+            self.assertEqual(widget.has_css_class('error'),missing)
+
+    def test_no_diagnosis_overview_and_cause_at_device(self):
+        note={'code':'HM401','kind':'tool','message':'diagnosis.missing_tool','args':{'tool':'smartctl','package':'smartmontools'}}
+        self.window.accept_snapshot(Snapshot([Port('disk:test','storage','Test disk','unknown',details={'diagnostics':[note],'model':''})],{},[],1))
+        def widgets(parent):
+            child=parent.get_first_child()
+            while child:
+                yield child
+                yield from widgets(child)
+                child=child.get_next_sibling()
+        self.assertFalse(any(isinstance(w,Gtk.Button) for w in widgets(self.window.right)))
+        self.assertFalse(any(isinstance(w,Gtk.Label) and 'Diagnose' in w.get_text() for w in widgets(self.window.right)))
+        self.window.selected_group='storage';self.window.render_details()
+        cause=next(w for w in widgets(self.window.right) if isinstance(w,Gtk.Label) and 'smartctl' in w.get_text())
+        self.assertTrue(cause.has_css_class('error'))
+
+    def test_access_hint_changes_when_admin_becomes_active(self):
+        issue='HM201: /sys/class/dmi/id/product_uuid (PermissionError, errno=13)'
+        self.window.accept_snapshot(Snapshot(PORTS,{'admin':False},[issue],1))
+        normal=self.window.issues_box.get_first_child().get_child().get_text()
+        self.assertIn('Adminmodus starten',normal)
+        self.window.accept_snapshot(Snapshot(PORTS,{'admin':True},[issue],2))
+        active=self.window.issues_box.get_first_child().get_child()
+        self.assertNotIn('Adminmodus starten',active.get_text())
+        self.assertIn('trotz aktiver Administratorrechte',active.get_text())
+        self.assertTrue(active.has_css_class('error'))
+
+    def test_bluetooth_menu_and_export_use_dedicated_category(self):
+        from monitor.export import report_rows
+        ports=[Port('bluetooth:hci0','bluetooth','Bluetooth','connected',details={'address':'00:11:22:33:44:55'}),
+               Port('net:eth0','network','eth0','connected',details={'address':'66:77:88:99:AA:BB'})]
+        self.window.accept_snapshot(Snapshot(ports,{},[],1))
+        self.window.lookup_action('hardware-bluetooth').activate(None)
+        self.assertEqual(self.window.selected_group,'bluetooth')
+        report=report_rows(self.window.snapshot,'bluetooth',self.window.tr)
+        self.assertTrue(any(row[-1]=='00:11:22:33:44:55' for row in report))
+        self.assertFalse(any(row[-1]=='66:77:88:99:AA:BB' for row in report))

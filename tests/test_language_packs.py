@@ -142,7 +142,7 @@ class PackTests(unittest.TestCase):
                 install_online_pair('https://example.org','fr',root/'languages',root/'help',root/'download')
                 self.assertIn('?sha256=',fetch.call_args_list[-1].args[0])
             for folder,ext,expected in (('languages','.json',DATA),('help','.html',HTML)):
-                self.assertEqual((root/'download'/folder/('fr'+ext)).read_bytes(),expected)
+                self.assertFalse((root/'download'/folder/('fr'+ext)).exists())
                 self.assertEqual((root/folder/('fr'+ext)).read_bytes(),expected)
 
     def test_unwritable_download_does_not_change_active_pair(self):
@@ -164,3 +164,51 @@ class PackTests(unittest.TestCase):
             with self.assertRaisesRegex(PackError,'HM503'):
                 install_local_pair(root/'fr.json',root/'languages',root/'help',('0'*64,hashlib.sha256(HTML).hexdigest()))
             self.assertFalse((root/'languages').exists())
+
+    def test_default_download_location_and_unrelated_files_preserved(self):
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp);downloads=root/'Downloads'
+            (downloads/'languages').mkdir(parents=True)
+            other=downloads/'languages/other.json';other.write_text('keep')
+            actual_install=install_local_pair
+            def inspect(path,directory,help_directory,expected_hashes):
+                self.assertEqual(path,downloads/'languages/fr.json')
+                self.assertEqual(path.read_bytes(),DATA)
+                self.assertEqual((downloads/'help/fr.html').read_bytes(),HTML)
+                return actual_install(path,directory,help_directory,expected_hashes)
+            with patch('monitor.language_packs.DOWNLOAD_ROOT',downloads),patch('monitor.language_packs.download',side_effect=[manifest(),DATA,HTML]),patch('monitor.language_packs.install_local_pair',side_effect=inspect):
+                install_online_pair('https://example.org','fr',root/'active/languages',root/'active/help')
+            self.assertFalse((downloads/'languages/fr.json').exists())
+            self.assertFalse((downloads/'help/fr.html').exists())
+            self.assertEqual(other.read_text(),'keep')
+            self.assertEqual((root/'active/languages/fr.json').read_bytes(),DATA)
+
+    def test_failed_install_keeps_download_pair(self):
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            with patch('monitor.language_packs.download',side_effect=[manifest(),DATA,HTML]),patch('monitor.language_packs.install_local_pair',side_effect=PackError('HM504')):
+                with self.assertRaisesRegex(PackError,'HM504'):
+                    install_online_pair('https://example.org','fr',root/'active/languages',root/'active/help',root/'Downloads')
+            self.assertEqual((root/'Downloads/languages/fr.json').read_bytes(),DATA)
+            self.assertEqual((root/'Downloads/help/fr.html').read_bytes(),HTML)
+
+    def test_cleanup_failure_reports_successful_install_and_keeps_files(self):
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp);unlink=Path.unlink
+            def refuse(path,*args,**kwargs):
+                if path==root/'Downloads/languages/fr.json':raise PermissionError('denied')
+                return unlink(path,*args,**kwargs)
+            with patch('monitor.language_packs.download',side_effect=[manifest(),DATA,HTML]),patch.object(Path,'unlink',refuse):
+                with self.assertRaisesRegex(PackError,'HM506'):
+                    install_online_pair('https://example.org','fr',root/'active/languages',root/'active/help',root/'Downloads')
+            self.assertEqual((root/'active/languages/fr.json').read_bytes(),DATA)
+            self.assertEqual((root/'active/help/fr.html').read_bytes(),HTML)
+            self.assertTrue((root/'Downloads/languages/fr.json').exists())
+
+    def test_cleanup_never_deletes_installed_files_if_paths_coincide(self):
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            with patch('monitor.language_packs.download',side_effect=[manifest(),DATA,HTML]):
+                install_online_pair('https://example.org','fr',root/'languages',root/'help',root)
+            self.assertEqual((root/'languages/fr.json').read_bytes(),DATA)
+            self.assertEqual((root/'help/fr.html').read_bytes(),HTML)

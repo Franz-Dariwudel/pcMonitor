@@ -92,3 +92,11 @@ class ExtendedTests(unittest.TestCase):
         rows=report_rows(snap,None,Translator('de'))
         self.assertTrue(any(r[-2:] == ['GPU-Lüfter (%, keine RPM)','0 %'] for r in rows))
         self.assertFalse(any(r[-2].startswith('field.') for r in rows))
+
+    def test_bluetooth_uses_dedicated_category(self):
+        with TemporaryDirectory() as tmp:
+            s,e=self.setup_scanner(tmp)
+            self.assertEqual(e.bluetooth()[0].group,'bluetooth')
+            self.write(s,'class/bluetooth/hci0/address','00:11:22:33:44:55')
+            self.assertEqual(e.bluetooth()[0].group,'bluetooth')
+            self.assertEqual(e.bluetooth()[0].id,'bluetooth:hci0')

@@ -55,13 +55,14 @@ class LanguageDialogTests(unittest.TestCase):
             def install(server,code,directory,help_directory,download_directory):
                 from monitor.constants import LANGUAGE_SERVER
                 self.assertEqual(server,LANGUAGE_SERVER)
-                self.assertEqual(download_directory,root/'download')
+                self.assertEqual(download_directory,root/'Downloads')
                 self.assertEqual(help_directory,help_dir)
                 return install_pair(DATA,HTML,code,directory,help_directory)
             try:
-                with patch('monitor.language_dialog.fetch_manifest',return_value=entries),patch('monitor.language_dialog.ROOT',root),patch('monitor.language_dialog.install_online_pair',side_effect=install):
+                with patch('monitor.language_dialog.fetch_manifest',return_value=entries),patch('monitor.language_dialog.DATA_ROOT',root),patch('monitor.language_dialog.DOWNLOAD_ROOT',root/'Downloads'),patch('monitor.language_dialog.install_online_pair',side_effect=install):
                     add_installer(window,dialog,box,lambda:(window.tr.reload(),refreshed.append(True)))
                     buttons={w.get_label():w for w in children(box) if isinstance(w,Gtk.Button)}
+                    self.assertNotIn(window.tr('packs.local'),buttons)
                     buttons[window.tr('packs.search')].emit('clicked')
                     install_button=buttons[window.tr('packs.install')]
                     wait_until(install_button.get_sensitive)

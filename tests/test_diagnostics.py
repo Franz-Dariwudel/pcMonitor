@@ -68,3 +68,22 @@ class DiagnosticTests(unittest.TestCase):
             self.assertTrue(any('sudo apt install util-linux' in row[-1] for row in rows))
             self.assertFalse(any('diagnosis.' in row[-1] for row in rows))
         self.assertFalse(self.notes(self.run_diagnosis(diagnosed)[0]))
+
+    def test_active_admin_replaces_generic_tips_and_reports_real_denial(self):
+        root=self.scanner.sys/'class/dmi/id'
+        ports=[Port('board','mainboard','Board','connected',details={'source':str(root),'note':'note.dmi'}),
+               Port('disk:sda','storage','sda','connected',details={'note':'note.disk','smart_health':'value.passed'})]
+        issues=[f'HM201: {root}/board_serial (PermissionError, errno=13)']
+        active=self.run_diagnosis(ports,admin=True,issues=issues)
+        self.assertEqual(active[0].details['note'],'note.dmi.active')
+        self.assertEqual(active[1].details['note'],'note.disk.active')
+        self.assertEqual(self.notes(active[0])[0]['message'],'diagnosis.access_active')
+        normal=self.run_diagnosis(active,admin=False,issues=issues)
+        self.assertEqual(normal[0].details['note'],'note.dmi')
+        self.assertEqual(self.notes(normal[0])[0]['message'],'diagnosis.admin')
+
+    def test_direct_root_scan_records_effective_privileges(self):
+        from unittest.mock import patch
+        for uid,expected in ((0,True),(1000,False)):
+            with patch('monitor.scanner.os.geteuid',return_value=uid):
+                self.assertEqual(self.scanner.scan().system['admin'],expected)
