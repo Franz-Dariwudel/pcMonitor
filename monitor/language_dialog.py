@@ -2,8 +2,8 @@
 """GTK-Einstellungen für lokale und online angebotene Sprachpakete."""
 from concurrent.futures import ThreadPoolExecutor
 import logging
-from gi.repository import Gtk, GLib
-from .constants import ROOT
+from gi.repository import Gtk, GLib, Gio
+from .constants import ROOT, LANGUAGE_SERVER
 from .language_packs import fetch_manifest, install_local_pair, install_online_pair, PackError
 
 
@@ -12,17 +12,13 @@ def add_installer(window, dialog, box, refresh):
     executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='language-download')
     alive = [True]
     busy = [False]
-    source = ['']
     caption = Gtk.Label(label=t('packs.title'), xalign=0)
     caption.add_css_class('heading'); box.append(caption)
     hint = Gtk.Label(label=t('packs.hint'), xalign=0, wrap=True, max_width_chars=64)
     box.append(hint)
     local = Gtk.Button(label=t('packs.local'), halign=Gtk.Align.START)
     box.append(local)
-    box.append(Gtk.Label(label=t('packs.server'), xalign=0))
-    server = Gtk.Entry(text=window.settings.get('language_server', ''), hexpand=True)
-    server.set_placeholder_text('https://github.com/Benutzer/pcMonitor')
-    box.append(server)
+    box.append(Gtk.Label(label=t('packs.download_hint'), xalign=0, wrap=True, max_width_chars=64))
     search = Gtk.Button(label=t('packs.search'), halign=Gtk.Align.START)
     box.append(search)
     choices = Gtk.ComboBoxText(); box.append(choices)
@@ -38,7 +34,7 @@ def add_installer(window, dialog, box, refresh):
 
     def run(operation, finished):
         busy[0] = True
-        for widget in (local, search, install, server): widget.set_sensitive(False)
+        for widget in (local, search, install): widget.set_sensitive(False)
         # Der Dialog bleibt bis zum Abschluss offen; die Hardwareanzeige läuft weiter.
         dialog.set_response_sensitive(Gtk.ResponseType.OK, False)
         dialog.set_response_sensitive(Gtk.ResponseType.CANCEL, False)
@@ -47,7 +43,7 @@ def add_installer(window, dialog, box, refresh):
         def complete():
             if not alive[0]: return False
             busy[0] = False
-            for widget in (local, search, server): widget.set_sensitive(True)
+            for widget in (local, search): widget.set_sensitive(True)
             install.set_sensitive(bool(choices.get_active_id()))
             dialog.set_response_sensitive(Gtk.ResponseType.OK, True)
             dialog.set_response_sensitive(Gtk.ResponseType.CANCEL, True)
@@ -68,6 +64,8 @@ def add_installer(window, dialog, box, refresh):
                                              t('packs.install'), t('cancel'))
         file_filter = Gtk.FileFilter(); file_filter.set_name('JSON'); file_filter.add_pattern('*.json')
         chooser.add_filter(file_filter)
+        downloads=ROOT/'download/languages'
+        if downloads.is_dir():chooser.set_current_folder(Gio.File.new_for_path(str(downloads)))
         dialog._language_chooser = chooser
         def selected(c, response):
             file = c.get_file() if response == Gtk.ResponseType.ACCEPT else None
@@ -86,20 +84,14 @@ def add_installer(window, dialog, box, refresh):
         status.set_text(t('packs.found', count=len(entries)))
 
     def search_clicked(*_):
-        source[0] = server.get_text().strip()
         choices.remove_all()
-        run(lambda: fetch_manifest(source[0]), found)
+        run(lambda: fetch_manifest(LANGUAGE_SERVER), found)
 
     def install_clicked(*_):
         code = choices.get_active_id()
-        if code: run(lambda: install_online_pair(source[0], code, t.directory, ROOT/'help'), installed)
+        if code: run(lambda: install_online_pair(LANGUAGE_SERVER, code, t.directory, ROOT/'help', ROOT/'download'), installed)
 
-    def changed(*_):
-        choices.remove_all(); install.set_sensitive(False); status.set_text('')
-
-    server.connect('changed', changed)
     choices.connect('changed', lambda *_: install.set_sensitive(bool(choices.get_active_id()) and not busy[0]))
     local.connect('clicked', choose)
     search.connect('clicked', search_clicked)
     install.connect('clicked', install_clicked)
-    return server

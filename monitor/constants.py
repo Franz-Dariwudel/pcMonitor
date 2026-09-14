@@ -2,7 +2,7 @@
 """Programmidentität und ausschließlich projektlokale Speicherorte."""
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
-VERSION = '1.6.0'
+VERSION = '1.6.1'
 APP_ID = 'eu.dogtruck.HardwareMonitor'
 APP_NAME = 'pcMonitor'
 AUTHOR = 'Josef Lehner'

@@ -11,6 +11,8 @@ import os
 from pathlib import Path
 import re
 import tempfile
+import uuid
+from .constants import ROOT
 from urllib.parse import urlsplit, urljoin
 from urllib.request import build_opener, HTTPRedirectHandler, Request
 
@@ -66,7 +68,7 @@ class NoRedirect(HTTPRedirectHandler):
 
 def download(url):
     try:
-        request = Request(url, headers={'User-Agent': 'pcMonitor-language-installer'})
+        request = Request(url, headers={'User-Agent': 'pcMonitor-language-installer', 'Cache-Control': 'no-cache'})
         with build_opener(NoRedirect).open(request, timeout=10) as response:
             data = response.read(LIMIT + 1)
         if len(data) > LIMIT:
@@ -81,7 +83,7 @@ def download(url):
 def fetch_manifest(server):
     base = server_url(server)
     try:
-        raw = json.loads(download(base + 'manifest.json').decode('utf-8'))
+        raw = json.loads(download(base + 'manifest.json?pcmonitor=' + uuid.uuid4().hex).decode('utf-8'))
         if not isinstance(raw, dict) or type(raw.get('version')) is not int or raw['version'] != 1:
             raise ValueError()
         entries = raw['languages']
@@ -208,7 +210,7 @@ def install_pair(language_data, help_data, code, directory, help_directory):
     return code
 
 
-def install_local_pair(path, directory, help_directory):
+def install_local_pair(path, directory, help_directory, expected_hashes=None):
     path = Path(path)
     if path.suffix != '.json': raise PackError('HM501')
     # Unterstützt Einzelpaare fr.json/fr.html und Paketordner languages/ + help/.
@@ -222,16 +224,26 @@ def install_local_pair(path, directory, help_directory):
         with html.open('rb') as stream: help_data = stream.read(LIMIT + 1)
     except OSError as exc:
         raise PackError('HM505') from exc
+    if expected_hashes is not None:
+        # Die tatsächlich von download/ gelesenen Bytes vor der Installation prüfen.
+        for content, expected in zip((data, help_data), expected_hashes):
+            if hashlib.sha256(content).hexdigest().lower() != expected.lower():
+                raise PackError('HM503')
     return install_pair(data, help_data, path.stem, directory, help_directory)
 
 
-def install_online_pair(server, code, directory, help_directory):
+def install_online_pair(server, code, directory, help_directory, download_directory=None):
     entries = fetch_manifest(server)
     if code not in entries: raise PackError('HM502')
     entry = entries[code]
-    data = download(urljoin(server_url(server), entry['file']))
-    html = download(urljoin(server_url(server), entry['help']['file']))
+    data = download(urljoin(server_url(server), entry['file']) + '?sha256=' + entry['sha256'])
+    html = download(urljoin(server_url(server), entry['help']['file']) + '?sha256=' + entry['help']['sha256'])
     for content, descriptor in ((data, entry), (html, entry['help'])):
         if hashlib.sha256(content).hexdigest().lower() != descriptor['sha256'].lower():
             raise PackError('HM503')
-    return install_pair(data, html, code, directory, help_directory)
+    # Erst ein geprüftes Paar unter download/ speichern. Es bleibt für spätere
+    # lokale Installationen erhalten; ein Fehler verändert die aktive Sprache nicht.
+    downloads=Path(download_directory) if download_directory is not None else ROOT/'download'
+    install_pair(data, html, code, downloads/'languages', downloads/'help')
+    return install_local_pair(downloads/'languages'/(code+'.json'), directory, help_directory,
+                              (entry['sha256'], entry['help']['sha256']))

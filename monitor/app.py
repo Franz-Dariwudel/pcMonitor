@@ -509,11 +509,10 @@ class MonitorWindow(Gtk.ApplicationWindow):
         box.append(label(self.tr('settings.reload'),'dim-label'))
         for problem in self.tr.problems:box.append(label(problem,'warning'))
         from .language_dialog import add_installer
-        server=add_installer(self,dialog,box,refresh_languages)
+        add_installer(self,dialog,box,refresh_languages)
         def done(d,response):
             if response==Gtk.ResponseType.OK:
                 self.settings['language']=language.get_active_id() if len(codes)>1 else self.tr.language
-                self.settings['language_server']=server.get_text().strip()
                 self.settings['interval']=int(interval.get_active_id())
                 self.tr.language=self.settings['language'];self._save();self.build();self.start_polling()
             d.destroy()
