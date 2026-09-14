@@ -290,6 +290,7 @@
   "packs.error.HM501": "HM501: Dil dosyası geçersiz veya okunamıyor. Metin değerleri ve language.name içeren UTF-8 <language-code>.json seçin (en fazla 2 MiB). İngilizce mevcut tüm anahtarları korumalıdır.",
   "packs.error.HM502": "HM502: Dil sunucusu veya manifest.json kullanılamıyor ya da geçersiz. HTTPS adresini, bağlantıyı ve bildirim biçimini denetleyin. Yönlendirmeye izin verilmez. Yerel diller kullanılabilir kalır.",
   "packs.error.HM503": "HM503: SHA256 sağlama toplamı eşleşmiyor. Dosya kurulmadı. Sağlayıcıdan düzeltilmiş dosya isteyin.",
-  "packs.error.HM504": "HM504: Dil ve yardım paketi kaydedilemedi. languages/ ve help/ yazma izinlerini ve boş alanı denetleyin. Değişiklik geri alınır; geri alma başarısızsa .pack-backup dosyalarını saklayın.",
-  "packs.error.HM505": "HM505: Eşleşen HTML yardımı eksik, okunamıyor veya izin verilmeyen içerik barındırıyor. <language-code>.html dosyasını JSON’un yanına ya da bitişik help/ klasörüne koyun. Betik veya harici gömülü içerik içermeyen pasif HTML gerekir. Hiçbir şey kurulmadı."
+  "packs.error.HM504": "HM504: Dil ve yardım paketi kaydedilemedi. download/, languages/ ve help/ yazma izinlerini ve boş alanı denetleyin. Değişiklik geri alınır; geri alma başarısızsa .pack-backup dosyalarını saklayın.",
+  "packs.error.HM505": "HM505: Eşleşen HTML yardımı eksik, okunamıyor veya izin verilmeyen içerik barındırıyor. <language-code>.html dosyasını JSON’un yanına ya da bitişik help/ klasörüne koyun. Betik veya harici gömülü içerik içermeyen pasif HTML gerekir. Hiçbir şey kurulmadı.",
+  "packs.download_hint": "Dil kaynağı GitHub olarak sabittir. Dosyalar önce program klasöründeki download/languages/ ve download/help/ içine kaydedilir, doğrulanır ve oradan kurulur. Daha sonra yerel kurulum için saklanır. Her arama güncel bir katalog ister."
 }

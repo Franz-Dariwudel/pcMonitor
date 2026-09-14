@@ -290,6 +290,7 @@
   "packs.error.HM501": "HM501: Language file invalid or unreadable. Select a UTF-8 JSON file <language-code>.json containing text values and language.name (maximum 2 MiB).English must include all existing keys.",
   "packs.error.HM502": "HM502: Language server or manifest.json unavailable or invalid. Check the HTTPS address, Internet connection and manifest format. Redirects are not allowed. Local languages remain available.",
   "packs.error.HM503": "HM503: SHA256 checksum mismatch. File was not installed. Ask the provider for a corrected file.",
-  "packs.error.HM504": "HM504: Cannot save language and help pack. Check write permissions and free space in languages/ and help/. Replacement is rolled back; preserve any .pack-backup files if rollback fails.",
-  "packs.error.HM505": "HM505: Matching HTML help missing, unreadable or contains unsupported content. Place <language-code>.html beside the JSON file or in the adjacent help/ folder. Only passive HTML without scripts or external embeds is allowed. Nothing was installed."
+  "packs.error.HM504": "HM504: Cannot save language and help pack. Check write permissions and free space in download/, languages/ and help/. Replacement is rolled back; preserve any .pack-backup files if rollback fails.",
+  "packs.error.HM505": "HM505: Matching HTML help missing, unreadable or contains unsupported content. Place <language-code>.html beside the JSON file or in the adjacent help/ folder. Only passive HTML without scripts or external embeds is allowed. Nothing was installed.",
+  "packs.download_hint": "The language source is fixed to GitHub. Downloads are first saved in download/languages/ and download/help/ inside the program folder, checked, and then installed from there. Files remain available for later local installation. Each search requests a fresh catalog."
 }

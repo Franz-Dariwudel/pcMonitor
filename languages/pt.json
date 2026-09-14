@@ -290,6 +290,7 @@
   "packs.error.HM501": "HM501: Ficheiro de idioma inválido ou ilegível. Selecione <language-code>.json em UTF-8 com valores de texto e language.name (máximo 2 MiB). O inglês deve manter todas as chaves existentes.",
   "packs.error.HM502": "HM502: Servidor de idiomas ou manifest.json indisponível ou inválido. Verifique HTTPS, ligação e formato do manifesto. Não são permitidos redirecionamentos. Os idiomas locais continuam disponíveis.",
   "packs.error.HM503": "HM503: Soma SHA256 incorreta. O ficheiro não foi instalado. Peça uma versão corrigida ao fornecedor.",
-  "packs.error.HM504": "HM504: Não foi possível guardar o pacote. Verifique permissões e espaço em languages/ e help/. A substituição é revertida; conserve os ficheiros .pack-backup se a reversão falhar.",
-  "packs.error.HM505": "HM505: Ajuda HTML correspondente em falta, ilegível ou com conteúdo não permitido. Coloque <language-code>.html ao lado do JSON ou em help/ adjacente. Só é permitido HTML passivo sem scripts nem conteúdos externos incorporados. Nada foi instalado."
+  "packs.error.HM504": "HM504: Não foi possível guardar o pacote. Verifique permissões e espaço em download/, languages/ e help/. A substituição é revertida; conserve os ficheiros .pack-backup se a reversão falhar.",
+  "packs.error.HM505": "HM505: Ajuda HTML correspondente em falta, ilegível ou com conteúdo não permitido. Coloque <language-code>.html ao lado do JSON ou em help/ adjacente. Só é permitido HTML passivo sem scripts nem conteúdos externos incorporados. Nada foi instalado.",
+  "packs.download_hint": "A origem dos idiomas está fixada no GitHub. Os ficheiros são primeiro guardados em download/languages/ e download/help/ na pasta do programa, verificados e instalados a partir daí. São conservados para instalação local posterior. Cada pesquisa pede um catálogo atualizado."
 }

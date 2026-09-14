@@ -290,6 +290,7 @@
   "packs.error.HM501": "HM501: Archivo de idioma no válido o ilegible. Seleccione <language-code>.json en UTF-8, con valores de texto y language.name (máximo 2 MiB). El inglés debe conservar todas las claves existentes.",
   "packs.error.HM502": "HM502: Servidor de idiomas o manifest.json no disponible o no válido. Compruebe HTTPS, conexión y formato del manifiesto. No se permiten redirecciones. Los idiomas locales siguen disponibles.",
   "packs.error.HM503": "HM503: La suma SHA256 no coincide. No se instaló el archivo. Solicite al proveedor una versión corregida.",
-  "packs.error.HM504": "HM504: No se pudo guardar el paquete de idioma y ayuda. Compruebe permisos y espacio en languages/ y help/. Se revierte la sustitución; conserve los archivos .pack-backup si falla la reversión.",
-  "packs.error.HM505": "HM505: Falta la ayuda HTML correspondiente, no se puede leer o contiene contenido no permitido. Coloque <language-code>.html junto al JSON o en help/ contigua. Solo se admite HTML pasivo sin scripts ni contenido externo incrustado. No se instaló nada."
+  "packs.error.HM504": "HM504: No se pudo guardar el paquete de idioma y ayuda. Compruebe permisos y espacio en download/, languages/ y help/. Se revierte la sustitución; conserve los archivos .pack-backup si falla la reversión.",
+  "packs.error.HM505": "HM505: Falta la ayuda HTML correspondiente, no se puede leer o contiene contenido no permitido. Coloque <language-code>.html junto al JSON o en help/ contigua. Solo se admite HTML pasivo sin scripts ni contenido externo incrustado. No se instaló nada.",
+  "packs.download_hint": "La fuente de idiomas está fijada en GitHub. Los archivos se guardan primero en download/languages/ y download/help/ dentro de la carpeta del programa, se comprueban y se instalan desde allí. Se conservan para una instalación local posterior. Cada búsqueda solicita un catálogo nuevo."
 }

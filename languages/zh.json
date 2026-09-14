@@ -290,6 +290,7 @@
   "packs.error.HM501": "HM501：语言文件无效或无法读取。请选择含文本值和 language.name 的 UTF-8 <language-code>.json（最大 2 MiB）。英语文件必须保留全部已有键。",
   "packs.error.HM502": "HM502：语言服务器或 manifest.json 不可用或无效。请检查 HTTPS 地址、网络连接及清单格式。不允许重定向。本地语言仍然可用。",
   "packs.error.HM503": "HM503：SHA256 校验和不匹配。文件未安装。请联系提供者获取修正后的文件。",
-  "packs.error.HM504": "HM504：无法保存语言和帮助包。请检查 languages/ 与 help/ 的写入权限和剩余空间。程序会回滚替换；若回滚失败，请保留 .pack-backup 文件。",
-  "packs.error.HM505": "HM505：对应 HTML 帮助缺失、无法读取或包含不允许的内容。请将 <language-code>.html 放在 JSON 旁边或相邻的 help/ 文件夹中。仅允许无脚本、无外部嵌入内容的静态 HTML。未安装任何文件。"
+  "packs.error.HM504": "HM504：无法保存语言和帮助包。请检查 download/, languages/ 与 help/ 的写入权限和剩余空间。程序会回滚替换；若回滚失败，请保留 .pack-backup 文件。",
+  "packs.error.HM505": "HM505：对应 HTML 帮助缺失、无法读取或包含不允许的内容。请将 <language-code>.html 放在 JSON 旁边或相邻的 help/ 文件夹中。仅允许无脚本、无外部嵌入内容的静态 HTML。未安装任何文件。",
+  "packs.download_hint": "语言来源固定为 GitHub。文件先保存到程序文件夹内的 download/languages/ 和 download/help/，检查后再从这些位置安装。文件会保留，供以后本地安装使用。每次搜索都会请求最新目录。"
 }
