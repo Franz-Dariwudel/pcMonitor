@@ -44,12 +44,12 @@ def main():
     print(packs)
     with tempfile.TemporaryDirectory(dir=ROOT/'work',prefix='build-') as d:
         stage=Path(d)/f'pcMonitor-{VERSION}';stage.mkdir()
-        for name in ('monitor','resources','tests'):
+        for name in ('monitor','resources','tests','packaging'):
             shutil.copytree(ROOT/name,stage/name,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
         for name in ('languages','help'):
             shutil.copytree(packs/name,stage/name)
         shutil.copy2(packs/'manifest.json',stage/'manifest.json')
-        for name in ('README.md','CHANGELOG.md','LICENSE','build.py','install.py','admin_worker.py','launcher.py','pyproject.toml'):
+        for name in ('README.md','CHANGELOG.md','LICENSE','build.py','build_deb.py','install.py','admin_worker.py','launcher.py','pyproject.toml'):
             shutil.copy2(ROOT/name,stage/name)
         info={'version':VERSION,'kind':'source','python':f'{sys.version_info.major}.{sys.version_info.minor}',
               'gtk':'>=4.8','languages':codes,'personal_data':False}
@@ -68,7 +68,7 @@ def main():
         for p in [*(stage/'monitor').glob('*.py'),stage/'admin_worker.py']:
             py_compile.compile(str(p),cfile=str(p.with_suffix('.pyc')),dfile=str(p.relative_to(stage)),doraise=True)
             p.unlink()
-        shutil.rmtree(stage/'tests');(stage/'build.py').unlink()
+        shutil.rmtree(stage/'tests');shutil.rmtree(stage/'packaging');(stage/'build.py').unlink();(stage/'build_deb.py').unlink()
         info['kind']='bytecode';(stage/'build-info.json').write_text(json.dumps(info,indent=2))
         archive=ROOT/'dist'/f"pcMonitor-{VERSION}-python{info['python']}-kompiliert.tar.gz"
         with tarfile.open(archive,'w:gz') as t:t.add(stage,arcname=stage.name)

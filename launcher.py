@@ -14,11 +14,12 @@ import subprocess
 import sys
 
 ROOT=Path(__file__).resolve().parent
+DATA_ROOT=Path.home()/'.local/share/pcMonitor' if (ROOT/'deb-install.json').is_file() else ROOT
 
 
 def show_error(message):
     """Bei Desktopstarts bleibt eine verständliche Fehlermeldung sichtbar."""
-    text=message+'\n\nProtokoll / Log: '+str(ROOT/'logs/start.log')
+    text=message+'\n\nProtokoll / Log: '+str(DATA_ROOT/'logs/start.log')
     print(text,file=sys.stderr)
     if sys.stderr.isatty() or not (os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY')):
         return
@@ -55,8 +56,8 @@ def preflight(root=ROOT):
 def main(argv=None):
     arguments=list(sys.argv[1:] if argv is None else argv)
     try:
-        (ROOT/'logs').mkdir(exist_ok=True)
-        logfile=(ROOT/'logs/start.log').open('a',encoding='utf-8')
+        (DATA_ROOT/'logs').mkdir(parents=True,exist_ok=True)
+        logfile=(DATA_ROOT/'logs/start.log').open('a',encoding='utf-8')
     except OSError as exc:
         show_error('HM101: logs/ ist nicht beschreibbar / not writable: '+str(exc));return 1
     with logfile:
@@ -71,7 +72,7 @@ def main(argv=None):
                 record(error);show_error(error);return 1
             environment=os.environ.copy()
             environment['PYTHONDONTWRITEBYTECODE']='1'
-            environment['XDG_CACHE_HOME']=str(ROOT/'cache')
+            environment['XDG_CACHE_HOME']=str(DATA_ROOT/'cache')
             if '--software-rendering' in arguments:
                 arguments.remove('--software-rendering')
                 environment['GSK_RENDERER']='cairo'

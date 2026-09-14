@@ -1,4 +1,4 @@
-# pcMonitor 1.6.1
+# pcMonitor 1.7.4
 
 Lokaler pcMonitor für Linux Mint mit GTK 4. Links stehen von Linux erkannte Anschlüsse mit farbigen, nach Anschlussart gestalteten Symbolen; rechts erscheinen Systemübersicht oder Details zur Auswahl. Deutsch und Englisch sind standardmäßig enthalten. Spanisch, Französisch, Portugiesisch, Chinesisch (vereinfacht), Hindi, Arabisch, Russisch und Türkisch lassen sich mit passender HTML-Hilfe installieren.
 
@@ -18,6 +18,50 @@ python3 -m monitor --admin
 ```
 
 `--scan` gibt eine einmalige lesende Bestandsaufnahme als JSON aus. `--admin --scan` nutzt den Administrator-Lesehelfer und meldet bei fehlender Freigabe einen Fehlerstatus. `--check` prüft die mitgelieferten Ressourcen. Exitcode 0 bedeutet Erfolg; 1 bedeutet eine fehlgeschlagene Prüfung beziehungsweise nicht verfügbare angeforderte Administratorfreigabe. Die Scan-Ausgabe kann Hardwarekennungen und Netzwerkadressen enthalten und sollte entsprechend behandelt werden.
+
+## DEB-Paket für Linux Mint
+
+`pcmonitor_1.7.4_all.deb` installieren (im Downloadordner):
+
+```bash
+sudo apt install ./pcmonitor_1.7.4_all.deb
+```
+
+Das Paket legt für vorhandene Benutzer mit eingerichteter Desktopfläche zwei
+Verknüpfungen an: **pcMonitor** (normal) und **pcMonitor (Admin)** (lesender
+Adminhelfer mit Passwortabfrage). Beide stehen auch im Anwendungsmenü. Falls
+Linux Mint beim ersten Öffnen eine Vertrauensbestätigung verlangt, den Starter
+als vertrauenswürdig bestätigen. Vorhandene gleichnamige fremde Starter werden
+nicht überschrieben; eine Kollision wird bei der Installation gemeldet.
+
+Programmdateien liegen unter `/usr/lib/pcmonitor`, der Befehl heißt `pcmonitor`.
+Fenster und Downloads bleiben auch beim Admin-Starter beim angemeldeten
+Benutzer. Schreibbare Daten liegen unter `~/.local/share/pcMonitor/`: `config/`,
+`logs/`, `cache/`, zusätzliche `languages/` und `help/`. Benutzerpakete haben
+Vorrang vor mitgelieferten Dateien derselben Sprache. Downloads werden weiterhin
+unter `~/Downloads/languages/` und `~/Downloads/help/` geprüft und nach einer
+erfolgreichen Sprachinstallation gelöscht.
+
+Deinstallation:
+
+```bash
+sudo apt remove pcmonitor
+```
+
+Die Paketverwaltung entfernt Programmdateien, Menüeinträge und Icons. Das
+Installationsjournal unter `/var/lib/pcmonitor/` ermöglicht das Entfernen der
+angelegten Desktop-Verknüpfungen und wird ebenfalls gelöscht. Bei einem Update
+bleiben die Verknüpfungen erhalten. Erst während der Nutzung angelegte persönliche
+Einstellungen, Protokolle und Sprachpakete bleiben erhalten; die DEB-Installation
+legt selbst keine solchen Benutzerdateien an. Fremde Desktopdateien bleiben
+unberührt. Entfernte oder ersetzte Benutzerkonten und Zugriffsfehler werden gemeldet.
+
+DEB aus dem vollständigen Quellcodepaket selbst bauen:
+
+```bash
+python3 build.py
+python3 build_deb.py
+```
 
 ## Bedienung
 
@@ -97,7 +141,7 @@ Erkennungshinweise stehen außerhalb der laufend erneuerten Ausgabe. Unveränder
 
 ## Diagnosehinweise ab 1.5.0
 
-Die Übersicht verweist auf Bereiche mit Diagnosehinweisen. Am Gerät wird unterschieden: HM401 fehlendes Hilfsprogramm (mit bekanntem Mint-Paket und Installationsbefehl), HM402 keine Treiberbindung, HM403 fehlende Leserechte, HM404 nicht bereitgestellte Daten, HM405 Abfrage prüfen trotz vorhandenem Werkzeug. Hinweise werden auch in CSV und Druck übernommen.
+Fehlende Angaben und ihre Ursachen stehen direkt beim Gerät in roter Schrift, ohne separate Diagnoseübersicht. Intern wird unterschieden: HM401 fehlendes Hilfsprogramm (mit bekanntem Mint-Paket und Installationsbefehl), HM402 keine Treiberbindung, HM403 fehlende Leserechte, HM404 nicht bereitgestellte Daten, HM405 Abfrage prüfen trotz vorhandenem Werkzeug. Hinweise werden auch in CSV und Druck übernommen.
 
 PCI-Treiberzuordnung wird bei Speicher-, Netzwerk-, Grafik-, Audio- und USB-Controllern geprüft, USB bei einzelnen Interfaces. Ein fehlender Eintrag bedeutet nicht automatisch ein fehlendes Paket: auch reservierte Geräte und Userspace-Treiber sind möglich. Ein vorhandener Treiber gilt auch ohne ladbares Modul als gebunden. Eine vollständige Treiber- oder Modulkompatibilitätsprüfung ist damit nicht verbunden. NVIDIA-Pakete werden nur über die passende Treiberverwaltung empfohlen, nicht mit einer geratenen Versionsnummer. Das Programm installiert keine Pakete und lädt keine Module automatisch.
 
@@ -110,11 +154,11 @@ Formatreferenzen: https://docs.nvidia.com/deploy/nvidia-smi/ und https://docs.ke
 
 ## Sprache und Hilfe installieren (1.6.0)
 
-Unter Bearbeiten → Einstellungen lassen sich Sprachdatei und passende HTML-Hilfe gemeinsam installieren. Lokal die `<code>.json` auswählen; `<code>.html` muss daneben liegen oder als `help/<code>.html` neben dem Ordner `languages/` vorliegen. Beide Dateien werden sofort installiert. Danach die Sprache auswählen und speichern. Die Installation bleibt auch bei Abbrechen des Einstellungsdialogs erhalten.
+Unter Bearbeiten → Einstellungen zuerst „Verfügbare Sprachen suchen“, dann eine Sprache auswählen und installieren. Sprachdatei und passende HTML-Hilfe werden gemeinsam von GitHub geladen. Anschließend die gewünschte Oberflächensprache auswählen und speichern. Die Installation bleibt auch bei Abbrechen des Einstellungsdialogs erhalten. Es gibt keinen Button für lokale Sprachpakete mehr.
 
 Die feste Sprachquelle ist [Franz-Dariwudel/pcMonitor](https://github.com/Franz-Dariwudel/pcMonitor). Es gibt kein Adressfeld mehr. „Verfügbare Sprachen suchen“ fordert bei jedem Klick einen frischen Katalog an; dadurch bleibt keine veraltete Liste mit nur zwei Sprachen im Cache. Dateien werden mit ihrer SHA256-Kennung abgerufen.
 
-Sprache und passende HTML-Hilfe werden zuerst unter `download/languages/<code>.json` und `download/help/<code>.html` im Programmordner gespeichert. Erst nach Prüfung beider Downloads wird das gespeicherte Paar erneut gelesen, anhand seiner Prüfsummen kontrolliert und nach `languages/` beziehungsweise `help/` installiert. Die Dateien in `download/` bleiben erhalten. Die lokale Dateiauswahl startet dort, wenn der Ordner bereits vorhanden ist. Schreibfehler in diesem Ordner werden als HM504 gemeldet; die aktive Installation bleibt unverändert.
+Sprache und HTML-Hilfe werden zuerst unter `~/Downloads/languages/` und `~/Downloads/help/` gespeichert und geprüft. Nach erfolgreicher Installation werden nur die heruntergeladenen Dateien des aktuellen Pakets gelöscht. Bei Installationsfehlern bleiben sie erhalten. HM506 bedeutet: Installation erfolgreich, aber Löschung nicht vollständig möglich; Downloads prüfen und bei Bedarf manuell löschen. Installierte Dateien bleiben erhalten.
 
 `python3 build.py` erstellt zusätzlich `dist/pcMonitor-sprachpakete/` mit einem uploadfertigen `manifest.json`, `languages/` und `help/` für alle vorhandenen Sprach-/Hilfepaare. Diese drei Elemente in den Stammordner des öffentlichen GitHub-Repositorys hochladen. Keine Konfigurationen, Logs oder Caches hochladen. Das Programm führt keine GitHub-Anmeldung durch; private Repositorys werden nicht unterstützt. Das öffentliche Repository ist https://github.com/Franz-Dariwudel/pcMonitor.
 
@@ -141,3 +185,73 @@ Der technische Python-Modulname `monitor` bleibt für bestehende Startaufrufe ko
 ## Sprachpakete vom 14. September 2026
 
 Acht zusätzliche vollständige Kataloge mit vollständigen Anwendungstexten und übersetzter HTML-Hilfe. Die arabische Hilfe verwendet Rechts-nach-links-Leserichtung. Fachbegriffe, Dateipfade und Platzhalter bleiben technisch kompatibel. Verfügbare Sprachen über Einstellungen → Verfügbare Sprachen suchen laden; jede Installation enthält immer Sprache und Hilfe. Programmversion 1.6.0 bleibt kompatibel; es ist kein Programmupdate für die neuen Sprachen erforderlich.
+
+Fehlende Hardwareangaben und nicht verfügbare Abfragen erscheinen direkt beim betroffenen Gerät in roter Schrift. Die separate Diagnoseübersicht entfällt.
+
+Bei aktivem Administrator-Lesezugriff entfallen allgemeine Aufforderungen zum Adminstart. Fehlende Freigaben und weiterhin bestehende Zugriffsbeschränkungen werden passend zum tatsächlichen Status angezeigt.
+
+## Erweiterte Linux-Inventur ab 1.7.2
+
+Die fünf zusätzlichen Bereiche Linux-System, Partitionen und Dateisysteme,
+lauschende Netzwerkdienste, Kernel und Speicherverwaltung sowie Sicherheit
+erscheinen links und im Hardwaremenü. CSV und Druck enthalten alle dort erfassten
+Felder. Bestehende Hardwarebereiche erhalten zusätzliche Detailwerte.
+
+- Linux: Distribution, Kernel, Hostname, Architektur, Bootzeit in UTC, Laufzeit,
+  Maschinen-ID und Boot-ID.
+- CPU: Frequenzen/Governor je logischer CPU, Microcode, vollständige Flags, NUMA
+  und Auslastung zwischen zwei Messungen. Bei ausgeschalteter Aktualisierung
+  zweimal manuell aktualisieren. `cpuinfo_cur_freq` stammt vom Hardwaretreiber;
+  `scaling_cur_freq` ist dessen gemeldeter Skalierungswert und kann abweichen.
+- RAM: SMBIOS-Modulhersteller, Teilenummer, Seriennummer, Größe, Steckplatz, Typ,
+  Geschwindigkeit und Spannungen. Fehlerkorrektur des Speicherarrays und
+  EDAC-Laufzeitdaten werden getrennt angegeben. DDR5-On-Die-ECC und Modulbreite
+  beweisen keine aktive systemweite ECC-Korrektur.
+- Laufwerke: SMART-Gesamtstatus, ATA-Rohattribute, NVMe-Warnbits, Reserven,
+  Verschleiß, Lese-/Schreibzähler, Betriebsstunden, Einschaltvorgänge, unsichere
+  Abschaltungen, Medienfehler, Fehlerprotokollzähler und Namespace-IDs.
+- Dateisysteme: Blockgerätebaum, Partitionen, Typ, Label, UUID/PARTUUID,
+  Einhängepunkte, Größen in Bytes, Mount-Optionen und Discard/TRIM-Grenze.
+  Die Verschlüsselungsanzeige bezieht sich auf den sichtbaren Blockgerätepfad;
+  dateibasierte Verschlüsselung wird dadurch nicht ausgeschlossen. Nicht
+  eingehängte Dateisysteme liefern häufig keine Belegungswerte. Lokale Mounts
+  ohne Blockgerät erhalten Größenwerte über df; Netzwerk-Dateisysteme werden
+  dafür nicht kontaktiert.
+- Netzwerk: MTU, DNS-Suchdomains, Lease-Optionen und Konfigurationsmethode,
+  Routingtabellen je Schnittstelle, Nachbartabelle, Fehler/Drops und andere
+  Kernelzähler, permanente MAC und Wake-on-LAN. `ipv6.method=auto` allein beweist
+  keinen DHCPv6-Lease. WLAN liest nur bekannte Access Points, ohne neuen Scan.
+- Bluetooth: Adaptereigenschaften sowie pro Adapter zugeordnete gekoppelte und
+  verbundene Geräte aus BlueZ. Kein Einschalten, Pairing oder Verbindungsaufbau.
+- Dienste: lokale lauschende TCP-/UDP-Sockets, Adressen, Prozessname und PID.
+  Das ist keine Prüfung ihrer Erreichbarkeit durch eine Firewall. Ohne Leserechte
+  können Prozessangaben fehlen; es wird keine Adminfreigabe automatisch angefragt.
+- Kernel: Swap/ZRAM, Module, Bootparameter, Taint-Bitmaske, Interrupts und IOMMU-
+  Gerätegruppen. Keine gemeldeten Gruppen beweisen nicht, dass IOMMU deaktiviert ist.
+- Sicherheit: Secure Boot, Lockdown und TPM2-Hersteller/Firmware, PCR-Bänke und
+  Algorithmen über lesendes `tpm2_getcap`. Eigenschaften bleiben in ihrer
+  technischen Originalnotation erhalten; TPM-Hersteller können numerisch sein.
+- GPU und Sensoren: AMD-Auslastung, VRAM und aktuelle DPM-Takte über sysfs,
+  vorhandene Treibersensoren sowie NVIDIA-Encoder/Decoder und unterstützte
+  Zusatztemperaturen. Sensorbezeichnungen werden nicht als Pumpen/VRM/RAM-
+  Sensoren erraten. Ohne bereitgestellte Werte bleibt die Angabe unbekannt.
+
+Optionale Programme: `util-linux` (lsblk, lscpu), `iproute2` (ip, ss),
+`network-manager` (nmcli), `ethtool`, `iw`, `dmidecode`, `smartmontools`,
+`nvme-cli`, `mokutil`, `tpm2-tools`, BlueZ und gegebenenfalls der vorhandene
+NVIDIA-Treiber mit nvidia-smi. pcMonitor installiert nichts und schreibt weder
+Hardwareeinstellungen noch TPM-Daten. Fehlende Werkzeuge werden über HM401,
+fehlende Daten weiterhin direkt in roter Schrift gekennzeichnet.
+
+Die Abfragen sind zeitlich begrenzt. Ein Scan kann bei langsamen Werkzeugen
+unvollständig sein; ein weiterer Scan nutzt gecachte Daten. CPU und Kernelwerte
+stammen aus procfs/sysfs. Netzwerk- und Dateisystemabfragen werden bis zu fünf
+Sekunden, statische Controllerdaten länger zwischengespeichert.
+
+Quellen zur Interpretation: [Linux CPUFreq](https://www.kernel.org/doc/html/latest/admin-guide/pm/cpufreq.html),
+[lsblk](https://man7.org/linux/man-pages/man8/lsblk.8.html),
+[NetworkManager-Einstellungen](https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nm-settings-nmcli.html).
+
+## Bereichssymbole ab 1.7.2
+
+Alle Bereiche besitzen passende 3D-Bilder. Bluetooth steht als eigener Bereich links und im Hardwaremenü; Suche, CSV und Druck verwenden dieselbe Zuordnung. Der serielle Bereich zeigt einen RS-232-Anschluss.

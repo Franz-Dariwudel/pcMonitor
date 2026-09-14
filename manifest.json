@@ -2,116 +2,116 @@
   "version": 1,
   "languages": {
     "ar": {
-      "version": 161,
+      "version": 174,
       "file": "languages/ar.json",
-      "sha256": "e476036abf01a38eaa98a071bce2c1bf22d28f33ddf4760673d50c62e8fde41d",
+      "sha256": "1c3c78a154bbd208994720dd4ce949da7f396c407fe49832d141401d2da8e505",
       "name": "العربية"
     },
     "de": {
-      "version": 161,
+      "version": 174,
       "file": "languages/de.json",
-      "sha256": "7b5caf253f3bcf83ffb2e85712423677e46f6536a3e9af54a7a020432005cac7",
+      "sha256": "36a02a5291df98c7b7256eacf50ad2d7b260daefda07dfb80e641b72ae61d95c",
       "name": "Deutsch"
     },
     "en": {
-      "version": 161,
+      "version": 174,
       "file": "languages/en.json",
-      "sha256": "a34d13bcb37ba02a9d29f237f3e93e379390a2ca179c0aee8a92de32cbdd2cfc",
+      "sha256": "d76a27322092414e3b735e40e993c5d509be594ee9ba992e880668191f1f9272",
       "name": "English"
     },
     "es": {
-      "version": 161,
+      "version": 174,
       "file": "languages/es.json",
-      "sha256": "1f075ffb8bce597389e86986e86297eba1c0fac5297aa0d7568464d911167bc1",
+      "sha256": "9aa3a8fa5d3578a050ffee97c7e6350d6e3ad6f5b8cd135632f47f182a7935e5",
       "name": "Español"
     },
     "fr": {
-      "version": 161,
+      "version": 174,
       "file": "languages/fr.json",
-      "sha256": "7008fc3098d4fba4c56b3076aa105ab291a9c7d35762727aa2ed9d210855e7f6",
+      "sha256": "d4cc4e54a2d1865387b4c9386e1e855ffa34e67e03b15973fbc56159d1df56df",
       "name": "Français"
     },
     "hi": {
-      "version": 161,
+      "version": 174,
       "file": "languages/hi.json",
-      "sha256": "dfb89ae6a9f12dbf8fcf5887734ba95500fca50c20d7d1b6e0b90343ab4e8733",
+      "sha256": "92f346c24a08b8ef028045287e6edeabab39b40d734eeadee4655746142f158f",
       "name": "हिन्दी"
     },
     "pt": {
-      "version": 161,
+      "version": 174,
       "file": "languages/pt.json",
-      "sha256": "ece4ff8cd37a866ff2a4572ae095e2e91cdd7a5ba5b26e5201d14c747728d5bb",
+      "sha256": "ca3ee8037a0e5a58b5258ec58e9db9a70d7905f65c47409a75b014b0cac41006",
       "name": "Português"
     },
     "ru": {
-      "version": 161,
+      "version": 174,
       "file": "languages/ru.json",
-      "sha256": "1e5faea6eb5d3290a80817e7d76c85ebb5b58ffd25c68426b8da1c9a5b913cf0",
+      "sha256": "466d8a350e5fef58f48a427c093b79a3d254fafd1b0a19e8ff68bcaf42c787e3",
       "name": "Русский"
     },
     "tr": {
-      "version": 161,
+      "version": 174,
       "file": "languages/tr.json",
-      "sha256": "fa91400dafda0a7571a0da54ec22a00e39b92a88697a8da4d750a4f621155319",
+      "sha256": "f077d33dbb06c82872e42ccec7d3f0cc406a1f290d0d75143c3027286b79fc41",
       "name": "Türkçe"
     },
     "zh": {
-      "version": 161,
+      "version": 174,
       "file": "languages/zh.json",
-      "sha256": "a8a93d6e5d42e80b976c152d40649046416d6c96825234d1d3c00b82b5a5ad2c",
+      "sha256": "53f902bc5c07d6ca888dc5bee22f94365dee2b2de6deda30715ead46d8a3b309",
       "name": "简体中文"
     }
   },
   "help": {
     "ar": {
-      "version": 161,
+      "version": 174,
       "file": "help/ar.html",
-      "sha256": "cd3ae141707fa858817f93322a0c5a21d3dd05f9e1d7a9ece2296f50c3b1c6af"
+      "sha256": "2a77b91032d64d8122f7a66d5c1c7d6afdfc1814cb7a6d65c355c2f55894cf81"
     },
     "de": {
-      "version": 161,
+      "version": 174,
       "file": "help/de.html",
-      "sha256": "39609487ffb1d881c9168bacbd3c439d6e5fd73fe9bc6cd57f68e93ad9572d69"
+      "sha256": "657c575cd4e699161cc57b5f9031c1008f4b763a00099ba4474242b88cb4397e"
     },
     "en": {
-      "version": 161,
+      "version": 174,
       "file": "help/en.html",
-      "sha256": "6d791ff41a0c17b7fa3038ef0642cbbdd23326febd53c1cd4714523b282adcd1"
+      "sha256": "fc1ecf55d9e2a502219fdebf70009f153be45c2ae9c24f58781b33d0cb468a7e"
     },
     "es": {
-      "version": 161,
+      "version": 174,
       "file": "help/es.html",
-      "sha256": "eb74338988f5f28376863a38819b124908b4c3030cce5430a7bc43d6c37ce26b"
+      "sha256": "cd32812c8dc2b38dcc20a31b6d55b1063a3078c89cc3ef0201c243701abb2d5e"
     },
     "fr": {
-      "version": 161,
+      "version": 174,
       "file": "help/fr.html",
-      "sha256": "16fec14320ad4435949872fb27bbe76691c07477b8111f854c70de80c3a12dda"
+      "sha256": "690c5293160bd077ee49bfade1615b7ee186fe8c0f857a1d47e50dc3f134707d"
     },
     "hi": {
-      "version": 161,
+      "version": 174,
       "file": "help/hi.html",
-      "sha256": "55afa207f681ca6301c8d6c2a6564b924bb703470d188b05aef92c3330ff51f3"
+      "sha256": "0d9e591ff25f96624ec6a36092db3c434ca54131bfe5ed4e19f68f41dc7518de"
     },
     "pt": {
-      "version": 161,
+      "version": 174,
       "file": "help/pt.html",
-      "sha256": "79ce8862407c67844aaeb72fe0f21e6b6db3594f39ac634aef13d5fe379895f1"
+      "sha256": "61ca2b01d3a44160f579191778686f855ea26de695a3bbc75831d02b5d84e992"
     },
     "ru": {
-      "version": 161,
+      "version": 174,
       "file": "help/ru.html",
-      "sha256": "0caacdf969664e250040fc71d2f1a0798787b4abca7aa4949e8cbecb0e4b2268"
+      "sha256": "866f61a8df713de9b6b80f3e2c21c849a7ba81eb37a4b9e8a3902e4dee36ab4e"
     },
     "tr": {
-      "version": 161,
+      "version": 174,
       "file": "help/tr.html",
-      "sha256": "f920ac04bcd6e41173eec07af1937fac266bd2f5075d5cd9db8852b8d1a13bf0"
+      "sha256": "1d01b0ac7f6c783a55ca7ee96a701d0e5cf1754aa6c812b1c874388054d9f1a9"
     },
     "zh": {
-      "version": 161,
+      "version": 174,
       "file": "help/zh.html",
-      "sha256": "2c229b01600872f990ba63a37a7b6875db101c185a7786526f65d966f570fae8"
+      "sha256": "8c29d70fa9b438973dfeabbdb7b755c73d4b7a302b32428caf33f089030f90bd"
     }
   }
 }

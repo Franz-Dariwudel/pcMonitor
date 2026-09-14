@@ -1,3 +1,40 @@
+# 1.7.4
+
+- Gewähltes 3D-PC-Icon für beide DEB-Starter (normal und Admin) verwenden.
+
+# 1.7.3
+
+- DEB-Paket mit normalem und Admin-Desktopstarter sowie Einträgen im Anwendungsmenü.
+- Systemdateien und persönliche Daten getrennt; Sprach-/Hilfepakete im Benutzerordner installierbar.
+- Erfasste Desktop-Verknüpfungen und alle Paketdateien werden bei Deinstallation entfernt.
+- GitHub-Stand 1.6.1 mit lokalem Stand verglichen; Veröffentlichung erst nach positivem Benutzertest.
+
+# 1.7.2
+
+- Lokalen Sprachpaket-Button entfernt; Installation über die feste GitHub-Sprachliste.
+- Sprach-/Hilfedownloads im Downloads-Ordner des Benutzers. Nach erfolgreicher Installation nur das aktuelle Downloadpaar löschen; bei Installationsfehlern erhalten.
+
+# 1.7.1
+
+- Eigene 3D-Symbole für Linux, Audio, USB-C/Thunderbolt, Dateisysteme, Netzwerkdienste, Kernel und Sicherheit.
+- Serielles Anschlussbild eingebunden. Bluetooth erhält einen eigenen Bereich mit eigenem Symbol; Suche, Hardwaremenü und Export folgen dieser Zuordnung.
+
+# 1.7.0
+
+- Linux-System, Partitionen/Dateisysteme, lauschende Netzwerkdienste, Kernel und Sicherheit als eigene Bereiche.
+- CPU-Messintervalle, Frequenzen/Governor, Microcode, Flags, NUMA; RAM-Spannungen, ECC-/EDAC-Angaben; zusätzliche SMART/NVMe-Werte.
+- DNS, DHCP, MTU, Routen, Nachbarn, Statistiken, WLAN-Details und gerätebezogene Bluetooth-Inventur.
+- AMD-GPU-Sysfs, NVIDIA-Encoder/Decoder und weitere Temperaturen.
+- Alle Daten in Oberfläche, CSV und Druck; 10 Sprachen und Hilfen aktualisiert.
+
+# 1.6.3
+
+- Adminhinweise richten sich nach aktivem Lesezugriff: keine erneute Aufforderung zum Adminstart bei vorhandenen Rechten. Verbleibende Zugriffsfehler werden weiterhin angezeigt. Direkter Root-Start wird ebenfalls erkannt.
+
+# 1.6.2
+
+- Diagnoseübersicht entfernt; fehlende Angaben und konkrete Ursachen direkt beim Gerät rot anzeigen. Gültige Nullwerte bleiben unverändert.
+
 # 1.6.1
 
 - Feste GitHub-Quelle ohne Adressfeld in den Einstellungen.
